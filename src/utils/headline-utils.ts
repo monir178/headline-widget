@@ -1,4 +1,4 @@
-import { HeadlineSettings, ExportData } from '@/types/headline';
+import type { HeadlineSettings, ExportData } from '@/types/headline';
 
 export const generateGradientCSS = (gradient: HeadlineSettings['gradient']): string => {
   if (!gradient.enabled) return '';
@@ -35,8 +35,8 @@ export const generateEmbedCode = (settings: HeadlineSettings): string => {
       ${settings.gradient.enabled ? `background: ${generateGradientCSS(settings.gradient)}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;` : ''}
       ${settings.animation.fadeIn ? 'animation: fadeIn 0.8s ease-in;' : ''}
       ${settings.animation.hoverGlow ? 'transition: all 0.3s ease;' : ''}
-      ${settings.effects.textShadow ? `text-shadow: ${settings.effects.textShadow};` : ''}
-      ${settings.effects.outline ? `-webkit-text-stroke: ${settings.effects.outlineWidth}px ${settings.effects.outlineColor};` : ''}
+      ${settings.animation.textShadow ? `text-shadow: ${settings.effects.textShadow};` : ''}
+      ${settings.animation.outline ? `-webkit-text-stroke: ${settings.effects.outlineWidth}px ${settings.effects.outlineColor};` : ''}
     }
     
     ${settings.animation.fadeIn ? `
@@ -47,7 +47,7 @@ export const generateEmbedCode = (settings: HeadlineSettings): string => {
     
     ${settings.animation.hoverGlow ? `
     .headline-widget:hover {
-      filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+      filter: drop-shadow(0 0 20px hsl(var(--primary) / 0.5));
       transform: scale(1.02);
     }` : ''}
   `;
