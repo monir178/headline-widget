@@ -23,6 +23,7 @@ export const HeadlineDisplay = () => {
     WebkitTextStroke: animation.outline
       ? `${effects.outlineWidth}px ${effects.outlineColor}`
       : "none",
+    color: gradient.enabled ? "transparent" : "#ffffff",
     ...gradientStyle,
   };
 
