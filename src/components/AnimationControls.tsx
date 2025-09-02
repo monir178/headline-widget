@@ -1,21 +1,23 @@
-import { useHeadlineStore } from '@/store/headline-store';
-import { ControlSection } from './ControlPanel';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
+import { useHeadlineStore } from "@/store/headline-store";
+import { ControlSection } from "./ControlPanel";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 export const AnimationControls = () => {
   const { settings, updateAnimation } = useHeadlineStore();
   const { animation } = settings;
 
   return (
-    <ControlSection title="Animations & Effects">
+    <ControlSection title="✨ Animations & Effects">
       <div className="space-y-4">
         {/* Fade In Animation */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
           <div className="space-y-1">
-            <Label htmlFor="fade-in">Fade In Animation</Label>
-            <p className="text-xs text-muted-foreground">Smooth entrance effect</p>
+            <Label htmlFor="fade-in" className="font-medium">Fade In Animation</Label>
+            <p className="text-xs text-muted-foreground">
+              Smooth entrance effect
+            </p>
           </div>
           <Switch
             id="fade-in"
@@ -24,13 +26,13 @@ export const AnimationControls = () => {
           />
         </div>
 
-        <Separator />
-
         {/* Hover Glow */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
           <div className="space-y-1">
-            <Label htmlFor="hover-glow">Hover Glow</Label>
-            <p className="text-xs text-muted-foreground">Glow effect on hover</p>
+            <Label htmlFor="hover-glow" className="font-medium">Hover Glow</Label>
+            <p className="text-xs text-muted-foreground">
+              Glow effect on hover
+            </p>
           </div>
           <Switch
             id="hover-glow"
@@ -45,7 +47,9 @@ export const AnimationControls = () => {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <Label htmlFor="per-letter">Per Letter Animation</Label>
-            <p className="text-xs text-muted-foreground">Animate each letter individually</p>
+            <p className="text-xs text-muted-foreground">
+              Animate each letter individually
+            </p>
           </div>
           <Switch
             id="per-letter"
@@ -60,7 +64,9 @@ export const AnimationControls = () => {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <Label htmlFor="text-shadow">Text Shadow</Label>
-            <p className="text-xs text-muted-foreground">Add depth with shadow</p>
+            <p className="text-xs text-muted-foreground">
+              Add depth with shadow
+            </p>
           </div>
           <Switch
             id="text-shadow"
@@ -75,7 +81,9 @@ export const AnimationControls = () => {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <Label htmlFor="text-outline">Text Outline</Label>
-            <p className="text-xs text-muted-foreground">Add text stroke outline</p>
+            <p className="text-xs text-muted-foreground">
+              Add text stroke outline
+            </p>
           </div>
           <Switch
             id="text-outline"

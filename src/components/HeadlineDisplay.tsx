@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
-import { useHeadlineStore } from '@/store/headline-store';
-import { generateGradientCSS } from '@/utils/headline-utils';
+import { motion } from "framer-motion";
+import { useHeadlineStore } from "@/store/headline-store";
+import { generateGradientCSS } from "@/utils/headline-utils";
 
 export const HeadlineDisplay = () => {
   const { settings } = useHeadlineStore();
@@ -9,9 +9,9 @@ export const HeadlineDisplay = () => {
   const gradientStyle = gradient.enabled
     ? {
         background: generateGradientCSS(gradient),
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
       }
     : {};
 
@@ -19,10 +19,10 @@ export const HeadlineDisplay = () => {
     fontSize: `${typography.fontSize}px`,
     fontFamily: typography.fontFamily,
     fontWeight: typography.fontWeight,
-    textShadow: animation.textShadow ? effects.textShadow : 'none',
+    textShadow: animation.textShadow ? effects.textShadow : "none",
     WebkitTextStroke: animation.outline
       ? `${effects.outlineWidth}px ${effects.outlineColor}`
-      : 'none',
+      : "none",
     ...gradientStyle,
   };
 
@@ -31,12 +31,12 @@ export const HeadlineDisplay = () => {
     animate: animation.fadeIn ? { opacity: 1, y: 0 } : {},
     transition: { duration: 0.8, ease: "easeOut" as const },
     whileHover: animation.hoverGlow
-      ? { filter: 'drop-shadow(0 0 20px hsl(var(--primary) / 0.5))' }
+      ? { filter: "drop-shadow(0 0 20px hsl(var(--primary) / 0.5))" }
       : {},
   };
 
   if (animation.perLetter) {
-    const letters = text.split('');
+    const letters = text.split("");
     return (
       <div className="flex flex-wrap justify-center">
         {letters.map((letter, index) => (
@@ -50,16 +50,16 @@ export const HeadlineDisplay = () => {
               delay: index * 0.05,
               ease: "easeOut" as const,
             }}
-            whileHover={animation.hoverGlow
-              ? { 
-                  scale: 1.1, 
-                  filter: 'drop-shadow(0 0 15px hsl(var(--primary) / 0.6))' 
-                }
-              : {}
+            whileHover={
+              animation.hoverGlow
+                ? {
+                    scale: 1.1,
+                    filter: "drop-shadow(0 0 15px hsl(var(--primary) / 0.6))",
+                  }
+                : {}
             }
-            className="cursor-default"
-          >
-            {letter === ' ' ? '\u00A0' : letter}
+            className="cursor-default">
+            {letter === " " ? "\u00A0" : letter}
           </motion.span>
         ))}
       </div>
@@ -70,8 +70,7 @@ export const HeadlineDisplay = () => {
     <motion.h1
       {...motionProps}
       style={baseStyle}
-      className="text-center cursor-default select-none leading-tight"
-    >
+      className="text-center cursor-default select-none leading-tight">
       {text}
     </motion.h1>
   );
