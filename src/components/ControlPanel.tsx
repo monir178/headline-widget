@@ -8,13 +8,13 @@ interface ControlPanelProps {
 
 export const ControlPanel = ({ children }: ControlPanelProps) => {
   return (
-    <Card className="backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl shadow-black/20 hover:shadow-black/30 transition-all duration-500">
-      <CardHeader className="pb-6 border-b border-white/10">
-        <CardTitle className="text-xl font-semibold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
-          ✨ Headline Controls
+    <Card className="backdrop-blur-sm bg-white/80 dark:bg-slate-900/80 border-slate-200/50 dark:border-slate-700/50 shadow-xl shadow-slate-900/10 dark:shadow-slate-950/40">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl font-semibold bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-100 dark:to-slate-400 bg-clip-text text-transparent">
+          🎨 Headline Controls
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-8 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 p-6">
+      <CardContent className="space-y-8 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600">
         {children}
       </CardContent>
     </Card>
@@ -28,14 +28,16 @@ interface ControlSectionProps {
 
 export const ControlSection = ({ title, children }: ControlSectionProps) => {
   return (
-    <div className="space-y-4 p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+    <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200/30 dark:border-slate-700/30">
       <div className="flex items-center space-x-3">
-        <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
           {title}
         </h3>
-        <Separator className="flex-1 bg-gradient-to-r from-cyan-500/30 to-transparent" />
+        <Separator className="flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-700 dark:to-transparent" />
       </div>
-      <div className="space-y-4">{children}</div>
+      <div className="space-y-4">
+        {children}
+      </div>
     </div>
   );
 };

@@ -94,9 +94,7 @@ export const TypographyControls = () => {
               <SelectContent>
                 {fontFamilies.map((font) => (
                   <SelectItem key={font.value} value={font.value}>
-                    <span
-                      style={{ fontFamily: font.value }}
-                      className="flex items-center gap-2">
+                    <span style={{ fontFamily: font.value }} className="flex items-center gap-2">
                       {font.label}
                       <span className="text-xs text-muted-foreground">Aa</span>
                     </span>
