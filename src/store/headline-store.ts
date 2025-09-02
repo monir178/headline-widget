@@ -12,17 +12,17 @@ interface HeadlineStore {
 }
 
 const initialSettings: HeadlineSettings = {
-    text: "Your Amazing Headline",
+    text: "Create Amazing Headlines",
     typography: {
-        fontSize: 48,
+        fontSize: 56,
         fontFamily: "Inter, system-ui, sans-serif",
         fontWeight: 700,
     },
     gradient: {
-        enabled: false,
+        enabled: true,
         direction: '→',
-        startColor: 'hsl(var(--primary))',
-        endColor: 'hsl(var(--accent))',
+        startColor: '#06b6d4',
+        endColor: '#8b5cf6',
     },
     wordStyling: [],
     animation: {
@@ -33,8 +33,8 @@ const initialSettings: HeadlineSettings = {
         outline: false,
     },
     effects: {
-        textShadow: '2px 2px 4px hsl(var(--muted-foreground) / 0.3)',
-        outlineColor: 'hsl(var(--foreground))',
+        textShadow: '0 0 20px rgba(59, 130, 246, 0.6)',
+        outlineColor: '#ffffff',
         outlineWidth: 1,
     },
 };

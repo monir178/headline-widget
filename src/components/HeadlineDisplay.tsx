@@ -6,16 +6,7 @@ export const HeadlineDisplay = () => {
   const { settings } = useHeadlineStore();
   const { text, typography, gradient, animation, effects } = settings;
 
-  const gradientStyle = gradient.enabled
-    ? {
-        background: generateGradientCSS(gradient),
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text",
-      }
-    : {};
-
-  const baseStyle = {
+  const baseStyle: React.CSSProperties = {
     fontSize: `${typography.fontSize}px`,
     fontFamily: typography.fontFamily,
     fontWeight: typography.fontWeight,
@@ -23,17 +14,33 @@ export const HeadlineDisplay = () => {
     WebkitTextStroke: animation.outline
       ? `${effects.outlineWidth}px ${effects.outlineColor}`
       : "none",
-    ...gradientStyle,
   };
+
+  // Apply gradient or regular color styles separately to avoid conflicts
+  const gradientStyle: React.CSSProperties = gradient.enabled
+    ? {
+        background: generateGradientCSS(gradient),
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+      }
+    : {
+        color: "#ffffff",
+      };
 
   const motionProps = {
     initial: animation.fadeIn ? { opacity: 0, y: 20 } : {},
     animate: animation.fadeIn ? { opacity: 1, y: 0 } : {},
-    transition: { duration: 0.8, ease: "easeOut" as const },
+    transition: { duration: 0.5, ease: "easeOut" as const },
     whileHover: animation.hoverGlow
-      ? { filter: "drop-shadow(0 0 20px hsl(var(--primary) / 0.5))" }
+      ? {
+          filter: "drop-shadow(0 0 12px rgba(59, 130, 246, 0.4))",
+          scale: 1.01,
+        }
       : {},
   };
+
+  const finalStyle = { ...baseStyle, ...gradientStyle };
 
   if (animation.perLetter) {
     const letters = text.split("");
@@ -41,8 +48,8 @@ export const HeadlineDisplay = () => {
       <div className="flex flex-wrap justify-center">
         {letters.map((letter, index) => (
           <motion.span
-            key={index}
-            style={baseStyle}
+            key={`${index}-${gradient.enabled}`}
+            style={finalStyle}
             initial={animation.fadeIn ? { opacity: 0, y: 20 } : {}}
             animate={animation.fadeIn ? { opacity: 1, y: 0 } : {}}
             transition={{
@@ -53,8 +60,8 @@ export const HeadlineDisplay = () => {
             whileHover={
               animation.hoverGlow
                 ? {
-                    scale: 1.1,
-                    filter: "drop-shadow(0 0 15px hsl(var(--primary) / 0.6))",
+                    scale: 1.05,
+                    filter: "drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))",
                   }
                 : {}
             }
@@ -69,7 +76,8 @@ export const HeadlineDisplay = () => {
   return (
     <motion.h1
       {...motionProps}
-      style={baseStyle}
+      key={`headline-${gradient.enabled}`}
+      style={finalStyle}
       className="text-center cursor-default select-none leading-tight">
       {text}
     </motion.h1>

@@ -21,10 +21,16 @@ export const GradientControls = () => {
     <ControlSection title="🌈 Gradient">
       <div className="space-y-6">
         {/* Gradient Toggle */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+        <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
           <div className="space-y-1">
-            <Label htmlFor="gradient-enabled" className="font-medium">Enable Gradient</Label>
-            <p className="text-xs text-muted-foreground">Apply gradient colors to text</p>
+            <Label
+              htmlFor="gradient-enabled"
+              className="font-medium text-slate-200">
+              Enable Gradient
+            </Label>
+            <p className="text-xs text-slate-400">
+              Apply gradient colors to text
+            </p>
           </div>
           <Switch
             id="gradient-enabled"
