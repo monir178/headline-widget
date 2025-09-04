@@ -59,16 +59,10 @@ export const WordStylingControls = () => {
 
   return (
     <div className="space-y-4">
-      <div className="text-sm text-slate-400 mb-4">
-        Select words and apply styling effects:
-      </div>
-
       {/* Word Selection */}
       <div className="space-y-3">
-        <div className="text-xs text-slate-500 uppercase tracking-wider">
-          Available Words
-        </div>
-        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+        <div className="text-sm text-white/80">Select words to style:</div>
+        <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto scrollbar-hide">
           {uniqueWords.map((word, index) => {
             const wordStyle = getWordStyle(word);
             const isSelected = selectedWord === word;
@@ -78,7 +72,7 @@ export const WordStylingControls = () => {
                 key={`${word}-${index}`}
                 onClick={() => setSelectedWord(isSelected ? "" : word)}
                 className={`
-                  px-3 py-1 rounded-lg text-xs transition-all duration-200
+                  px-2 py-1 rounded-lg text-xs transition-all duration-200
                   ${
                     isSelected
                       ? "bg-blue-500/30 border border-blue-400/50 text-blue-300"
@@ -102,33 +96,31 @@ export const WordStylingControls = () => {
 
       {/* Style Controls */}
       {selectedWord && (
-        <div className="space-y-3 pt-4 border-t border-white/10">
-          <div className="text-xs text-slate-500 uppercase tracking-wider">
-            Style "{selectedWord}"
-          </div>
-          <div className="grid grid-cols-3 gap-3">
+        <div className="space-y-3 pt-3 border-t border-white/10">
+          <div className="text-xs text-white/60">Style "{selectedWord}"</div>
+          <div className="grid grid-cols-3 gap-2">
             <button
               onClick={() => applyWordStyling(selectedWord, "highlight")}
-              className="neon-button neon-button-blue p-3">
+              className="glass-panel p-2 border border-yellow-400/30 hover:bg-yellow-500/10 transition-colors">
               <div className="text-center">
-                <div className="text-sm font-medium">🔥 Highlight</div>
-                <div className="text-xs opacity-70">Background</div>
+                <div className="text-xs font-medium text-yellow-400">🔥</div>
+                <div className="text-xs text-white/60">Highlight</div>
               </div>
             </button>
             <button
               onClick={() => applyWordStyling(selectedWord, "underline")}
-              className="neon-button neon-button-emerald p-3">
+              className="glass-panel p-2 border border-cyan-400/30 hover:bg-cyan-500/10 transition-colors">
               <div className="text-center">
-                <div className="text-sm font-medium">__ Underline</div>
-                <div className="text-xs opacity-70">Text line</div>
+                <div className="text-xs font-medium text-cyan-400">_</div>
+                <div className="text-xs text-white/60">Underline</div>
               </div>
             </button>
             <button
               onClick={() => applyWordStyling(selectedWord, "block")}
-              className="neon-button neon-button-purple p-3">
+              className="glass-panel p-2 border border-purple-400/30 hover:bg-purple-500/10 transition-colors">
               <div className="text-center">
-                <div className="text-sm font-medium">⬛ Block</div>
-                <div className="text-xs opacity-70">Background</div>
+                <div className="text-xs font-medium text-purple-400">⬛</div>
+                <div className="text-xs text-white/60">Block</div>
               </div>
             </button>
           </div>
@@ -136,8 +128,8 @@ export const WordStylingControls = () => {
           {getWordStyle(selectedWord) && (
             <button
               onClick={() => removeWordStyling(selectedWord)}
-              className="w-full neon-button bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 p-2">
-              <div className="text-sm">Remove Styling</div>
+              className="w-full glass-panel p-2 border border-red-400/30 text-red-400 hover:bg-red-500/10 transition-colors">
+              <div className="text-xs">Remove Styling</div>
             </button>
           )}
         </div>
@@ -145,15 +137,13 @@ export const WordStylingControls = () => {
 
       {/* Applied Styles Summary */}
       {settings.wordStyling.length > 0 && (
-        <div className="space-y-2 pt-4 border-t border-white/10">
-          <div className="text-xs text-slate-500 uppercase tracking-wider">
-            Applied Styles
-          </div>
-          <div className="flex flex-wrap gap-2">
+        <div className="space-y-2 pt-3 border-t border-white/10">
+          <div className="text-xs text-white/60">Applied Styles</div>
+          <div className="flex flex-wrap gap-1">
             {settings.wordStyling.map((style, index) => (
               <div
                 key={index}
-                className="flex items-center gap-2 px-2 py-1 bg-purple-500/10 border border-purple-500/30 rounded-lg text-xs">
+                className="flex items-center gap-1 px-2 py-1 bg-purple-500/10 border border-purple-500/30 rounded-lg text-xs">
                 <span className="text-purple-300">{style.text}</span>
                 <div className="flex gap-1">
                   {style.highlight && <span>🔥</span>}

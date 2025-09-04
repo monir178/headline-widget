@@ -331,59 +331,61 @@ export const HeadlineDisplay = () => {
 
   // Render with word styling
   return (
-    <motion.h1
-      key={gradientKey}
-      initial={motionProps.initial}
-      animate={motionProps.animate}
-      transition={motionProps.transition}
-      style={{
-        ...motionProps.style,
-        background:
-          gradient.enabled && !animation.outline
-            ? `linear-gradient(${directionMap[gradient.direction]}, ${
-                gradient.startColor
-              }, ${gradient.endColor})`
-            : "none",
-      }}
-      onMouseEnter={motionProps.onMouseEnter}
-      onMouseLeave={motionProps.onMouseLeave}
-      className="text-center cursor-default select-none leading-tight">
-      {processedText.map((segment, index) => {
-        if (!segment.styling) {
-          return <span key={index}>{segment.text}</span>;
-        }
+    <div className="glass-panel p-4 lg:p-8 text-center">
+      <motion.h1
+        key={gradientKey}
+        initial={motionProps.initial}
+        animate={motionProps.animate}
+        transition={motionProps.transition}
+        style={{
+          ...motionProps.style,
+          background:
+            gradient.enabled && !animation.outline
+              ? `linear-gradient(${directionMap[gradient.direction]}, ${
+                  gradient.startColor
+                }, ${gradient.endColor})`
+              : "none",
+        }}
+        onMouseEnter={motionProps.onMouseEnter}
+        onMouseLeave={motionProps.onMouseLeave}
+        className="cursor-default select-none leading-tight mobile-headline">
+        {processedText.map((segment, index) => {
+          if (!segment.styling) {
+            return <span key={index}>{segment.text}</span>;
+          }
 
-        const wordStyle: React.CSSProperties = {};
+          const wordStyle: React.CSSProperties = {};
 
-        if (segment.styling.highlight) {
-          wordStyle.backgroundColor = "rgba(251, 191, 36, 0.3)"; // Yellow highlight
-          wordStyle.padding = "2px 4px";
-          wordStyle.borderRadius = "4px";
-        }
+          if (segment.styling.highlight) {
+            wordStyle.backgroundColor = "rgba(251, 191, 36, 0.3)"; // Yellow highlight
+            wordStyle.padding = "2px 4px";
+            wordStyle.borderRadius = "4px";
+          }
 
-        if (segment.styling.underline) {
-          wordStyle.textDecoration = "underline";
-          wordStyle.textDecorationColor = "#06b6d4"; // Cyan underline
-          wordStyle.textDecorationThickness = "2px";
-          wordStyle.textUnderlineOffset = "4px";
-        }
+          if (segment.styling.underline) {
+            wordStyle.textDecoration = "underline";
+            wordStyle.textDecorationColor = "#06b6d4"; // Cyan underline
+            wordStyle.textDecorationThickness = "2px";
+            wordStyle.textUnderlineOffset = "4px";
+          }
 
-        if (
-          segment.styling.backgroundColor &&
-          segment.styling.backgroundColor !== "transparent"
-        ) {
-          wordStyle.backgroundColor = segment.styling.backgroundColor;
-          wordStyle.padding = "4px 8px";
-          wordStyle.borderRadius = "6px";
-          wordStyle.margin = "0 2px";
-        }
+          if (
+            segment.styling.backgroundColor &&
+            segment.styling.backgroundColor !== "transparent"
+          ) {
+            wordStyle.backgroundColor = segment.styling.backgroundColor;
+            wordStyle.padding = "4px 8px";
+            wordStyle.borderRadius = "6px";
+            wordStyle.margin = "0 2px";
+          }
 
-        return (
-          <span key={index} style={wordStyle}>
-            {segment.text}
-          </span>
-        );
-      })}
-    </motion.h1>
+          return (
+            <span key={index} style={wordStyle}>
+              {segment.text}
+            </span>
+          );
+        })}
+      </motion.h1>
+    </div>
   );
 };

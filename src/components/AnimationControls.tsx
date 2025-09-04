@@ -1,103 +1,70 @@
 import { useHeadlineStore } from "@/store/headline-store";
-import { ControlSection } from "./ControlPanel";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 
 export const AnimationControls = () => {
   const { settings, updateAnimation } = useHeadlineStore();
   const { animation } = settings;
 
+  const animationOptions = [
+    {
+      id: "fade-in",
+      label: "Fade In",
+      description: "Smooth entrance",
+      checked: animation.fadeIn,
+      onChange: (fadeIn: boolean) => updateAnimation({ fadeIn }),
+    },
+    {
+      id: "hover-glow",
+      label: "Hover Glow",
+      description: "Glow on hover",
+      checked: animation.hoverGlow,
+      onChange: (hoverGlow: boolean) => updateAnimation({ hoverGlow }),
+    },
+    {
+      id: "per-letter",
+      label: "Per Letter",
+      description: "Letter by letter",
+      checked: animation.perLetter,
+      onChange: (perLetter: boolean) => updateAnimation({ perLetter }),
+    },
+    {
+      id: "text-shadow",
+      label: "Text Shadow",
+      description: "Add depth",
+      checked: animation.textShadow,
+      onChange: (textShadow: boolean) => updateAnimation({ textShadow }),
+    },
+    {
+      id: "text-outline",
+      label: "Text Outline",
+      description: "Stroke outline",
+      checked: animation.outline,
+      onChange: (outline: boolean) => updateAnimation({ outline }),
+    },
+  ];
+
   return (
-    <ControlSection title="✨ Animations & Effects">
-      <div className="space-y-4">
-        {/* Fade In Animation */}
-        <div className="flex items-center justify-between">
+    <div className="space-y-3">
+      {animationOptions.map((option) => (
+        <div
+          key={option.id}
+          className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors">
           <div className="space-y-1">
-            <Label htmlFor="fade-in" className="font-medium">
-              Fade In Animation
+            <Label
+              htmlFor={option.id}
+              className="font-medium text-white/80 text-sm">
+              {option.label}
             </Label>
-            <p className="text-xs text-muted-foreground">
-              Smooth entrance effect
-            </p>
+            <p className="text-xs text-white/60">{option.description}</p>
           </div>
           <Switch
-            id="fade-in"
-            checked={animation.fadeIn}
-            onCheckedChange={(fadeIn) => updateAnimation({ fadeIn })}
+            id={option.id}
+            checked={option.checked}
+            onCheckedChange={option.onChange}
           />
         </div>
-
-        <Separator />
-
-        {/* Hover Glow */}
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <Label htmlFor="hover-glow" className="font-medium">
-              Hover Glow
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              Glow effect on hover
-            </p>
-          </div>
-          <Switch
-            id="hover-glow"
-            checked={animation.hoverGlow}
-            onCheckedChange={(hoverGlow) => updateAnimation({ hoverGlow })}
-          />
-        </div>
-
-        <Separator />
-
-        {/* Per Letter Animation */}
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <Label htmlFor="per-letter">Per Letter Animation</Label>
-            <p className="text-xs text-muted-foreground">
-              Animate each letter individually
-            </p>
-          </div>
-          <Switch
-            id="per-letter"
-            checked={animation.perLetter}
-            onCheckedChange={(perLetter) => updateAnimation({ perLetter })}
-          />
-        </div>
-
-        <Separator />
-
-        {/* Text Shadow */}
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <Label htmlFor="text-shadow">Text Shadow</Label>
-            <p className="text-xs text-muted-foreground">
-              Add depth with shadow
-            </p>
-          </div>
-          <Switch
-            id="text-shadow"
-            checked={animation.textShadow}
-            onCheckedChange={(textShadow) => updateAnimation({ textShadow })}
-          />
-        </div>
-
-        <Separator />
-
-        {/* Text Outline */}
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <Label htmlFor="text-outline">Text Outline</Label>
-            <p className="text-xs text-muted-foreground">
-              Add text stroke outline
-            </p>
-          </div>
-          <Switch
-            id="text-outline"
-            checked={animation.outline}
-            onCheckedChange={(outline) => updateAnimation({ outline })}
-          />
-        </div>
-      </div>
-    </ControlSection>
+      ))}
+    </div>
   );
 };
