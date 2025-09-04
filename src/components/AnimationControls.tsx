@@ -12,9 +12,11 @@ export const AnimationControls = () => {
     <ControlSection title="✨ Animations & Effects">
       <div className="space-y-4">
         {/* Fade In Animation */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+        <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <Label htmlFor="fade-in" className="font-medium">Fade In Animation</Label>
+            <Label htmlFor="fade-in" className="font-medium">
+              Fade In Animation
+            </Label>
             <p className="text-xs text-muted-foreground">
               Smooth entrance effect
             </p>
@@ -26,10 +28,14 @@ export const AnimationControls = () => {
           />
         </div>
 
+        <Separator />
+
         {/* Hover Glow */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+        <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <Label htmlFor="hover-glow" className="font-medium">Hover Glow</Label>
+            <Label htmlFor="hover-glow" className="font-medium">
+              Hover Glow
+            </Label>
             <p className="text-xs text-muted-foreground">
               Glow effect on hover
             </p>

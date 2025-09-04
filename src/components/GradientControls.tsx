@@ -21,15 +21,32 @@ export const GradientControls = () => {
     <ControlSection title="🌈 Gradient">
       <div className="space-y-6">
         {/* Gradient Toggle */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+        <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
           <div className="space-y-1">
-            <Label htmlFor="gradient-enabled" className="font-medium">Enable Gradient</Label>
-            <p className="text-xs text-muted-foreground">Apply gradient colors to text</p>
+            <Label
+              htmlFor="gradient-enabled"
+              className="font-medium text-slate-200">
+              Enable Gradient
+            </Label>
+            <p className="text-xs text-slate-400">
+              Apply gradient colors to text
+            </p>
           </div>
           <Switch
             id="gradient-enabled"
             checked={gradient.enabled}
-            onCheckedChange={(enabled) => updateGradient({ enabled })}
+            onCheckedChange={(enabled) => {
+              if (enabled) {
+                // Set default gradient colors when enabling gradient
+                updateGradient({
+                  enabled,
+                  startColor: "#cb3cff",
+                  endColor: "#00d5ff",
+                });
+              } else {
+                updateGradient({ enabled });
+              }
+            }}
           />
         </div>
 
@@ -64,15 +81,11 @@ export const GradientControls = () => {
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
-                      value={
-                        gradient.startColor.includes("hsl")
-                          ? "#3B82F6"
-                          : gradient.startColor
-                      }
+                      value={gradient.startColor}
                       onChange={(e) =>
                         updateGradient({ startColor: e.target.value })
                       }
-                      className="w-8 h-8 rounded border border-border cursor-pointer"
+                      className="w-10 h-10 rounded-full  cursor-pointer color-input"
                     />
                     <Badge variant="secondary" className="text-xs">
                       Start
@@ -84,15 +97,11 @@ export const GradientControls = () => {
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
-                      value={
-                        gradient.endColor.includes("hsl")
-                          ? "#8B5CF6"
-                          : gradient.endColor
-                      }
+                      value={gradient.endColor}
                       onChange={(e) =>
                         updateGradient({ endColor: e.target.value })
                       }
-                      className="w-8 h-8 rounded border border-border cursor-pointer"
+                      className="w-10 h-10 rounded-2xl border-2 border-white/20 cursor-pointer color-input"
                     />
                     <Badge variant="secondary" className="text-xs">
                       End
