@@ -3,8 +3,9 @@ import { CompactControlPanel } from "./components/CompactControlPanel";
 import { FloatingExportActions } from "./components/FloatingExportActions";
 import SiriOrb from "./components/smoothui/ui/SiriOrb";
 import { Toaster } from "react-hot-toast";
+import { memo } from "react";
 
-function App() {
+const App = memo(() => {
   return (
     <div className="dark min-h-screen relative overflow-hidden bg-black">
       {/* Enhanced Background */}
@@ -82,6 +83,6 @@ function App() {
       />
     </div>
   );
-}
+});
 
 export default App;

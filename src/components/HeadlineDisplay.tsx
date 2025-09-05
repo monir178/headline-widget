@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useHeadlineStore } from "@/store/headline-store";
+import { useMemo, useCallback, useEffect, useState, useRef } from "react";
 
 const MAX_CHARACTERS = 100;
 
@@ -13,21 +14,76 @@ export const HeadlineDisplay = () => {
   const { text, typography, gradient, animation, effects, wordStyling } =
     settings;
 
-  // Process text with word styling
-  const processTextWithStyling = (inputText: string) => {
+  // Track previous text to determine which letters are new
+  const prevTextRef = useRef(text);
+  const prevPerLetterRef = useRef(animation.perLetter);
+  const [newLetterIndices, setNewLetterIndices] = useState<Set<number>>(
+    new Set()
+  );
+
+  // Track new letters when text changes
+  useEffect(() => {
+    if (animation.perLetter) {
+      // If per-letter animation was just enabled, animate all letters
+      if (!prevPerLetterRef.current) {
+        const allIndices = new Set<number>();
+        for (let i = 0; i < text.length; i++) {
+          allIndices.add(i);
+        }
+        setNewLetterIndices(allIndices);
+
+        // Clear after animation
+        const timer = setTimeout(() => {
+          setNewLetterIndices(new Set());
+        }, 1000);
+
+        prevPerLetterRef.current = true;
+        prevTextRef.current = text;
+        return () => clearTimeout(timer);
+      }
+
+      // If text changed, animate only new letters
+      if (text !== prevTextRef.current) {
+        const prevText = prevTextRef.current;
+        const newIndices = new Set<number>();
+
+        // Find new letters (text got longer)
+        if (text.length > prevText.length) {
+          for (let i = prevText.length; i < text.length; i++) {
+            newIndices.add(i);
+          }
+        }
+
+        setNewLetterIndices(newIndices);
+        prevTextRef.current = text;
+
+        // Clear new letter indices after animation
+        const timer = setTimeout(() => {
+          setNewLetterIndices(new Set());
+        }, 1000);
+
+        return () => clearTimeout(timer);
+      }
+    } else {
+      setNewLetterIndices(new Set());
+      prevTextRef.current = text;
+      prevPerLetterRef.current = false;
+    }
+  }, [text, animation.perLetter]);
+
+  // Memoize text processing for performance
+  const processedText = useMemo(() => {
     if (!wordStyling || wordStyling.length === 0) {
-      return [{ text: inputText, styling: null }];
+      return [{ text, styling: null }];
     }
 
-    const words = inputText.split(/(\s+)/); // Keep whitespace in the split
+    const words = text.split(/(\s+)/); // Keep whitespace in the split
     return words.map((word) => {
       const cleanWord = word.replace(/[^\w]/g, ""); // Remove punctuation for matching
       const style = wordStyling.find((s) => s.text === cleanWord);
       return { text: word, styling: style || null };
     });
-  };
-
-  const processedText = processTextWithStyling(text);
+  }, [text, wordStyling]);
 
   const baseStyle = {
     fontSize: `${typography.fontSize}px`,
@@ -39,23 +95,32 @@ export const HeadlineDisplay = () => {
       : "none",
   };
 
-  // Create a unique key for visual changes (excluding font to allow animation)
-  const gradientKey = `${
-    gradient.enabled
-      ? `${gradient.startColor}-${gradient.endColor}-${gradient.direction}`
-      : "no-gradient"
-  }-${animation.textShadow}-${animation.outline}-${animation.hoverGlow}`;
+  // Memoize keys for performance
+  const gradientKey = useMemo(
+    () =>
+      `${
+        gradient.enabled
+          ? `${gradient.startColor}-${gradient.endColor}-${gradient.direction}`
+          : "no-gradient"
+      }-${animation.textShadow}-${animation.outline}-${animation.hoverGlow}`,
+    [gradient, animation]
+  );
 
-  // Create a separate key for font changes to trigger smooth font transitions
-  const fontKey = `${typography.fontFamily}-${typography.fontWeight}`;
+  const fontKey = useMemo(
+    () => `${typography.fontFamily}-${typography.fontWeight}`,
+    [typography]
+  );
 
-  // Simple gradient implementation with proper direction support
-  const directionMap = {
-    "→": "to right",
-    "←": "to left",
-    "↓": "to bottom",
-    "↑": "to top",
-  };
+  // Memoize direction map for performance
+  const directionMap = useMemo(
+    () => ({
+      "→": "to right",
+      "←": "to left",
+      "↓": "to bottom",
+      "↑": "to top",
+    }),
+    []
+  );
 
   // Helper function to convert hex to rgba
   const hexToRgba = (hex: string, alpha: number) => {
@@ -65,7 +130,8 @@ export const HeadlineDisplay = () => {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  const createMinimalisticGlow = () => {
+  // Memoize filter functions for performance
+  const createMinimalisticGlow = useCallback(() => {
     if (!gradient.enabled) {
       return `drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 8px rgba(59, 130, 246, 0.6)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.4))`;
     }
@@ -74,31 +140,32 @@ export const HeadlineDisplay = () => {
     const endGlow = hexToRgba(gradient.endColor, 0.3);
 
     return `drop-shadow(0 0 12px ${startGlow}) drop-shadow(0 0 18px ${endGlow})`;
-  };
+  }, [gradient]);
 
-  // Get base filter (text shadow) that should persist
-  const getBaseFilter = () => {
+  const getBaseFilter = useCallback(() => {
     if (gradient.enabled && animation.textShadow) {
       return "drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))";
     }
     return "none";
-  };
+  }, [gradient, animation]);
 
-  // Combine base filter with hover glow
-  const getCombinedFilter = (isHover: boolean) => {
-    const baseFilter = getBaseFilter();
-    const glowFilter =
-      isHover && animation.hoverGlow ? createMinimalisticGlow() : "";
+  const getCombinedFilter = useCallback(
+    (isHover: boolean) => {
+      const baseFilter = getBaseFilter();
+      const glowFilter =
+        isHover && animation.hoverGlow ? createMinimalisticGlow() : "";
 
-    if (baseFilter !== "none" && glowFilter) {
-      return `${baseFilter} ${glowFilter}`;
-    } else if (baseFilter !== "none") {
-      return baseFilter;
-    } else if (glowFilter) {
-      return glowFilter;
-    }
-    return "none";
-  };
+      if (baseFilter !== "none" && glowFilter) {
+        return `${baseFilter} ${glowFilter}`;
+      } else if (baseFilter !== "none") {
+        return baseFilter;
+      } else if (glowFilter) {
+        return glowFilter;
+      }
+      return "none";
+    },
+    [getBaseFilter, createMinimalisticGlow, animation]
+  );
 
   const textStyle = gradient.enabled
     ? animation.outline
@@ -175,6 +242,131 @@ export const HeadlineDisplay = () => {
       : undefined,
   };
 
+  // Memoize letter styles calculation for performance
+  const letterStyles = useMemo(() => {
+    if (!animation.perLetter) return [];
+
+    const letters = text.split("");
+    return letters.map((_, index) => {
+      // Calculate each letter's position in the gradient based on direction
+      let progress = 0;
+
+      if (letters.length > 1) {
+        switch (gradient.direction) {
+          case "→": // Left to Right
+            progress = index / (letters.length - 1);
+            break;
+          case "←": // Right to Left
+            progress = (letters.length - 1 - index) / (letters.length - 1);
+            break;
+          case "↓": // Top to Bottom - start color at top, end color at bottom
+            progress = 0; // All letters get start color for top-to-bottom
+            break;
+          case "↑": // Bottom to Top - end color at top, start color at bottom
+            progress = 1; // All letters get end color for bottom-to-top
+            break;
+          default:
+            progress = index / (letters.length - 1);
+        }
+      }
+
+      const baseLetterStyle = {
+        fontSize: `${typography.fontSize}px`,
+        fontFamily: typography.fontFamily,
+        fontWeight: typography.fontWeight,
+        textShadow: animation.textShadow ? effects.textShadow : "none",
+      };
+
+      if (!gradient.enabled) {
+        return {
+          ...baseLetterStyle,
+          color: animation.outline ? "transparent" : "#ffffff",
+          WebkitTextStroke: animation.outline
+            ? `${effects.outlineWidth}px ${effects.outlineColor}`
+            : "none",
+        };
+      }
+
+      // For vertical directions, use background gradient
+      if (gradient.direction === "↓" || gradient.direction === "↑") {
+        return animation.outline
+          ? {
+              ...baseLetterStyle,
+              color: "transparent",
+              background: "none",
+              WebkitBackgroundClip: "initial",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "initial",
+              textShadow: `
+                -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                0px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                -${effects.outlineWidth}px 0px 0 ${gradient.startColor},
+                ${effects.outlineWidth}px 0px 0 ${gradient.endColor},
+                ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor},
+                0px ${effects.outlineWidth}px 0 ${gradient.endColor},
+                -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor}
+              `
+                .replace(/\s+/g, " ")
+                .trim(),
+              WebkitTextStroke: "none",
+            }
+          : {
+              ...baseLetterStyle,
+              color: "transparent",
+              background: `linear-gradient(${
+                directionMap[gradient.direction]
+              }, ${gradient.startColor}, ${gradient.endColor})`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              textShadow: "none",
+              WebkitTextStroke: "none",
+            };
+      }
+
+      // For horizontal directions, use calculated color
+      const startColor = gradient.startColor;
+      const endColor = gradient.endColor;
+
+      // Convert hex to RGB
+      const hexToRgb = (hex: string) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return { r, g, b };
+      };
+
+      const start = hexToRgb(startColor);
+      const end = hexToRgb(endColor);
+
+      // Interpolate RGB values
+      const r = Math.round(start.r + (end.r - start.r) * progress);
+      const g = Math.round(start.g + (end.g - start.g) * progress);
+      const b = Math.round(start.b + (end.b - start.b) * progress);
+
+      return {
+        ...baseLetterStyle,
+        color: animation.outline ? "transparent" : `rgb(${r}, ${g}, ${b})`,
+        textShadow: animation.outline
+          ? `
+            -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
+            0px -${effects.outlineWidth}px 0 ${gradient.startColor},
+            ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
+            -${effects.outlineWidth}px 0px 0 ${gradient.startColor},
+            ${effects.outlineWidth}px 0px 0 ${gradient.endColor},
+            ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor},
+            0px ${effects.outlineWidth}px 0 ${gradient.endColor},
+            -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor}
+          `
+              .replace(/\s+/g, " ")
+              .trim()
+          : "none",
+        WebkitTextStroke: "none",
+      };
+    });
+  }, [text, typography, gradient, animation, effects, directionMap]);
+
   if (animation.perLetter) {
     const letters = text.split("");
 
@@ -223,161 +415,32 @@ export const HeadlineDisplay = () => {
             }
           }}>
           {letters.map((letter, index) => {
-            // Calculate each letter's position in the gradient based on direction
-            let progress = 0;
+            // Use a simple stable key
+            const letterKey = `${index}-${letter}`;
 
-            if (letters.length > 1) {
-              switch (gradient.direction) {
-                case "→": // Left to Right
-                  progress = index / (letters.length - 1);
-                  break;
-                case "←": // Right to Left
-                  progress =
-                    (letters.length - 1 - index) / (letters.length - 1);
-                  break;
-                case "↓": // Top to Bottom - start color at top, end color at bottom
-                  progress = 0; // All letters get start color for top-to-bottom
-                  break;
-                case "↑": // Bottom to Top - end color at top, start color at bottom
-                  progress = 1; // All letters get end color for bottom-to-top
-                  break;
-                default:
-                  progress = index / (letters.length - 1);
-              }
-            }
+            // Determine if this letter should animate
+            const isNewLetter = newLetterIndices.has(index);
+            const shouldAnimate = animation.perLetter && isNewLetter;
 
-            // For vertical gradients, we need to use CSS gradient instead of per-letter colors
-            const getLetterStyle = () => {
-              const baseLetterStyle = {
-                fontSize: `${typography.fontSize}px`,
-                fontFamily: typography.fontFamily,
-                fontWeight: typography.fontWeight,
-                textShadow: animation.textShadow ? effects.textShadow : "none",
-              };
-
-              if (!gradient.enabled) {
-                return {
-                  ...baseLetterStyle,
-                  // When gradient is off and outline is on, make text transparent to show white outline
-                  color: animation.outline ? "transparent" : "#ffffff",
-                  WebkitTextStroke: animation.outline
-                    ? `${effects.outlineWidth}px ${effects.outlineColor}`
-                    : "none",
-                };
-              }
-
-              // For vertical directions, use background gradient
-              if (gradient.direction === "↓" || gradient.direction === "↑") {
-                return animation.outline
-                  ? {
-                      // Outline mode: transparent text with gradient outline using shadows
-                      ...baseLetterStyle,
-                      color: "transparent",
-                      background: "none",
-                      WebkitBackgroundClip: "initial",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "initial",
-                      textShadow: `
-                      -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                      0px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                      ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                      -${effects.outlineWidth}px 0px 0 ${gradient.startColor},
-                      ${effects.outlineWidth}px 0px 0 ${gradient.endColor},
-                      ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor},
-                      0px ${effects.outlineWidth}px 0 ${gradient.endColor},
-                      -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor}
-                    `
-                        .replace(/\s+/g, " ")
-                        .trim(),
-                      WebkitTextStroke: "none",
-                    }
-                  : {
-                      // Gradient fill mode: show gradient text
-                      ...baseLetterStyle,
-                      color: "transparent",
-                      background: `linear-gradient(${
-                        directionMap[gradient.direction]
-                      }, ${gradient.startColor}, ${gradient.endColor})`,
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                      textShadow: "none",
-                      WebkitTextStroke: "none",
-                    };
-              }
-
-              // For horizontal directions, use calculated color
-              const startColor = gradient.startColor;
-              const endColor = gradient.endColor;
-
-              // Convert hex to RGB
-              const hexToRgb = (hex: string) => {
-                const r = parseInt(hex.slice(1, 3), 16);
-                const g = parseInt(hex.slice(3, 5), 16);
-                const b = parseInt(hex.slice(5, 7), 16);
-                return { r, g, b };
-              };
-
-              const start = hexToRgb(startColor);
-              const end = hexToRgb(endColor);
-
-              // Interpolate RGB values
-              const r = Math.round(start.r + (end.r - start.r) * progress);
-              const g = Math.round(start.g + (end.g - start.g) * progress);
-              const b = Math.round(start.b + (end.b - start.b) * progress);
-
-              return {
-                ...baseLetterStyle,
-                color: animation.outline
-                  ? "transparent"
-                  : `rgb(${r}, ${g}, ${b})`,
-                // For outline mode with horizontal gradient, create gradient outline using shadows
-                textShadow: animation.outline
-                  ? `
-                    -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                    0px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                    ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                    -${effects.outlineWidth}px 0px 0 ${gradient.startColor},
-                    ${effects.outlineWidth}px 0px 0 ${gradient.endColor},
-                    ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor},
-                    0px ${effects.outlineWidth}px 0 ${gradient.endColor},
-                    -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor}
-                  `
-                      .replace(/\s+/g, " ")
-                      .trim()
-                  : "none",
-                WebkitTextStroke: "none",
-              };
-            };
+            // Calculate delay for new letters (only for the most recent batch)
+            const newLetterDelay = isNewLetter
+              ? (index - Math.min(...Array.from(newLetterIndices))) * 0.05
+              : 0;
 
             return (
-              <motion.span
-                key={`${index}-${fontKey}-${gradientKey}`}
-                style={getLetterStyle()}
-                initial={
-                  animation.perLetter
-                    ? { opacity: 0, y: 20, scale: 0.8 }
-                    : animation.fadeIn
-                    ? { opacity: 0, y: 20 }
-                    : { opacity: 0 }
-                }
-                animate={
-                  animation.perLetter
-                    ? { opacity: 1, y: 0, scale: 1 }
-                    : animation.fadeIn
-                    ? { opacity: 1, y: 0 }
-                    : { opacity: 1 }
-                }
-                transition={{
-                  duration: animation.perLetter ? 0.6 : 0.5,
-                  delay: animation.perLetter ? index * 0.08 : index * 0.05,
-                  ease: animation.perLetter ? "backOut" : ("easeOut" as const),
-                  type: animation.perLetter ? "spring" : "tween",
-                  bounce: animation.perLetter ? 0.4 : 0,
+              <span
+                key={letterKey}
+                style={{
+                  ...letterStyles[index],
+                  animation: shouldAnimate
+                    ? `letterAppear 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) ${newLetterDelay}s both`
+                    : animation.fadeIn && !animation.perLetter
+                    ? `fadeInUp 0.5s ease-out ${index * 0.05}s both`
+                    : "none",
                 }}
                 className="cursor-default">
                 {letter === " " ? "\u00A0" : letter}
-              </motion.span>
+              </span>
             );
           })}
         </div>

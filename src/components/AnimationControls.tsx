@@ -1,8 +1,9 @@
 import { useHeadlineStore } from "@/store/headline-store";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { memo } from "react";
 
-export const AnimationControls = () => {
+export const AnimationControls = memo(() => {
   const { settings, updateAnimation } = useHeadlineStore();
   const { animation } = settings;
 
@@ -67,4 +68,4 @@ export const AnimationControls = () => {
       ))}
     </div>
   );
-};
+});

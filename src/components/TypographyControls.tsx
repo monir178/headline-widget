@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { memo } from "react";
 
 const fontFamilies = [
   {
@@ -57,7 +58,7 @@ const fontWeights = [
 
 const MAX_CHARACTERS = 50;
 
-export const TypographyControls = () => {
+export const TypographyControls = memo(() => {
   const { settings, updateSettings, updateTypography } = useHeadlineStore();
   const { text, typography } = settings;
 
@@ -214,4 +215,4 @@ export const TypographyControls = () => {
       </div>
     </div>
   );
-};
+});

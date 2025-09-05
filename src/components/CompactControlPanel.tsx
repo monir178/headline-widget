@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
@@ -90,6 +90,11 @@ export const CompactControlPanel = () => {
   const toggleSection = (sectionId: string) => {
     setExpandedSection(expandedSection === sectionId ? "" : sectionId);
   };
+
+  // Memoize the active section component to prevent unnecessary re-renders
+  const activeSectionComponent = useMemo(() => {
+    return sections.find((s) => s.id === expandedSection)?.component;
+  }, [expandedSection]);
 
   return (
     <>
@@ -259,10 +264,7 @@ export const CompactControlPanel = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.2 }}>
-                            {
-                              sections.find((s) => s.id === expandedSection)
-                                ?.component
-                            }
+                            {activeSectionComponent}
                           </motion.div>
                         )}
                       </AnimatePresence>
