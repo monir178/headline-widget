@@ -39,7 +39,7 @@ export const HeadlineDisplay = () => {
       : "no-gradient"
   }-${animation.textShadow}-${animation.outline}-${animation.hoverGlow}`;
 
-  // Separate key for font changes to trigger animation
+  // Create a separate key for font changes to trigger smooth font transitions
   const fontKey = `${typography.fontFamily}-${typography.fontWeight}`;
 
   // Simple gradient implementation with proper direction support
@@ -166,6 +166,17 @@ export const HeadlineDisplay = () => {
           e.currentTarget.style.filter = getCombinedFilter(false);
         }
       : undefined,
+  };
+
+  // Font change animation props
+  const fontChangeProps = {
+    initial: { opacity: 0, scale: 0.95 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 1.05 },
+    transition: {
+      duration: 0.4,
+      ease: "easeInOut" as const,
+    },
   };
 
   if (animation.perLetter) {
@@ -322,21 +333,21 @@ export const HeadlineDisplay = () => {
 
             return (
               <motion.span
-                key={`${index}-${gradientKey}`}
+                key={`${index}-${fontKey}-${gradientKey}`}
                 style={getLetterStyle()}
                 initial={
                   animation.perLetter
                     ? { opacity: 0, y: 20, scale: 0.8 }
                     : animation.fadeIn
                     ? { opacity: 0, y: 20 }
-                    : {}
+                    : { opacity: 0, scale: 0.95 }
                 }
                 animate={
                   animation.perLetter
                     ? { opacity: 1, y: 0, scale: 1 }
                     : animation.fadeIn
                     ? { opacity: 1, y: 0 }
-                    : {}
+                    : { opacity: 1, scale: 1 }
                 }
                 transition={{
                   duration: animation.perLetter ? 0.6 : 0.5,
@@ -359,10 +370,14 @@ export const HeadlineDisplay = () => {
   return (
     <div className="glass-panel p-4 lg:p-8 text-center">
       <motion.h1
-        key={fontKey}
-        initial={motionProps.initial}
-        animate={motionProps.animate}
-        transition={motionProps.transition}
+        key={`${fontKey}-${gradientKey}`}
+        initial={{ ...motionProps.initial, ...fontChangeProps.initial }}
+        animate={{ ...motionProps.animate, ...fontChangeProps.animate }}
+        transition={{
+          ...motionProps.transition,
+          duration: 0.4,
+          ease: "easeInOut" as const,
+        }}
         style={{
           ...motionProps.style,
           // Apply gradient to the entire text container to maintain flow
