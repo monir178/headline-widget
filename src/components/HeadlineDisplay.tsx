@@ -168,17 +168,6 @@ export const HeadlineDisplay = () => {
       : undefined,
   };
 
-  // Font change animation props
-  const fontChangeProps = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-    transition: {
-      duration: 0.4,
-      ease: "easeInOut" as const,
-    },
-  };
-
   if (animation.perLetter) {
     const letters = text.split("");
 
