@@ -55,6 +55,8 @@ const fontWeights = [
   { value: 900, label: "Black (900)" },
 ];
 
+const MAX_CHARACTERS = 50;
+
 export const TypographyControls = () => {
   const { settings, updateSettings, updateTypography } = useHeadlineStore();
   const { text, typography } = settings;
@@ -63,18 +65,56 @@ export const TypographyControls = () => {
     <div className="space-y-6">
       {/* Text Content */}
       <div className="space-y-3">
-        <Label
-          htmlFor="headline-text"
-          className="text-sm font-medium text-white/80">
-          Headline Text
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label
+            htmlFor="headline-text"
+            className="text-sm font-medium text-white/80">
+            Headline Text
+          </Label>
+          <div
+            className={`px-2 py-1 rounded-lg text-xs font-mono transition-colors ${
+              text.length > MAX_CHARACTERS
+                ? "bg-red-500/20 text-red-400"
+                : text.length > MAX_CHARACTERS * 0.8
+                ? "bg-yellow-500/20 text-yellow-400"
+                : "bg-white/10 text-white/70"
+            }`}>
+            {text.length}/{MAX_CHARACTERS}
+          </div>
+        </div>
         <Input
           id="headline-text"
           value={text}
-          onChange={(e) => updateSettings({ text: e.target.value })}
+          onChange={(e) => {
+            const newText = e.target.value;
+            if (newText.length <= MAX_CHARACTERS) {
+              updateSettings({ text: newText });
+            }
+          }}
           placeholder="Enter your amazing headline..."
-          className="text-base"
+          className={`text-base transition-colors ${
+            text.length > MAX_CHARACTERS
+              ? "border-red-500/50 focus:border-red-500"
+              : text.length > MAX_CHARACTERS * 0.8
+              ? "border-yellow-500/50 focus:border-yellow-500"
+              : ""
+          }`}
+          maxLength={MAX_CHARACTERS}
         />
+        {text.length > MAX_CHARACTERS * 0.8 && (
+          <p
+            className={`text-xs transition-colors ${
+              text.length > MAX_CHARACTERS ? "text-red-400" : "text-yellow-400"
+            }`}>
+            {text.length > MAX_CHARACTERS
+              ? `Character limit exceeded! Please reduce by ${
+                  text.length - MAX_CHARACTERS
+                } characters.`
+              : `Approaching character limit. ${
+                  MAX_CHARACTERS - text.length
+                } characters remaining.`}
+          </p>
+        )}
       </div>
 
       {/* Font Size */}

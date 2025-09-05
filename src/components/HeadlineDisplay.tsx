@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { useHeadlineStore } from "@/store/headline-store";
 
+const MAX_CHARACTERS = 100;
+
 export const HeadlineDisplay = () => {
   const { settings } = useHeadlineStore();
   const { text, typography, gradient, animation, effects, wordStyling } =
@@ -173,6 +175,21 @@ export const HeadlineDisplay = () => {
 
     return (
       <div className="glass-panel p-4 lg:p-8 text-center">
+        {/* Character limit indicator */}
+        {text.length > MAX_CHARACTERS * 0.8 && (
+          <div className="mb-4 flex justify-center">
+            <div
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+                text.length > MAX_CHARACTERS
+                  ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                  : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+              }`}>
+              {text.length > MAX_CHARACTERS
+                ? `⚠️ Text exceeds limit (${text.length}/${MAX_CHARACTERS})`
+                : `📝 Approaching limit (${text.length}/${MAX_CHARACTERS})`}
+            </div>
+          </div>
+        )}
         <div
           key={gradientKey}
           className="flex flex-wrap justify-center group"
@@ -358,6 +375,21 @@ export const HeadlineDisplay = () => {
   // Render with word styling
   return (
     <div className="glass-panel p-4 lg:p-8 text-center">
+      {/* Character limit indicator */}
+      {text.length > MAX_CHARACTERS * 0.8 && (
+        <div className="mb-4 flex justify-center">
+          <div
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+              text.length > MAX_CHARACTERS
+                ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+            }`}>
+            {text.length > MAX_CHARACTERS
+              ? `⚠️ Text exceeds limit (${text.length}/${MAX_CHARACTERS})`
+              : `📝 Approaching limit (${text.length}/${MAX_CHARACTERS})`}
+          </div>
+        </div>
+      )}
       <motion.h1
         key={`${fontKey}-${gradientKey}`}
         initial={{ opacity: 0 }}
