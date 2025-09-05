@@ -1,9 +1,11 @@
 import { useHeadlineStore } from "@/store/headline-store";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const WordStylingControls = () => {
   const { settings, updateSettings } = useHeadlineStore();
   const [selectedWord, setSelectedWord] = useState("");
+  const [appliedStyle, setAppliedStyle] = useState<string | null>(null);
 
   // Get unique words from the headline text
   const words = settings.text
@@ -18,9 +20,40 @@ export const WordStylingControls = () => {
     word: string,
     styleType: "highlight" | "underline" | "block"
   ) => {
+    // Show animation feedback
+    setAppliedStyle(styleType);
+    setTimeout(() => setAppliedStyle(null), 1000);
+
     const existingStyleIndex = settings.wordStyling.findIndex(
       (style) => style.text === word
     );
+
+    // Use gradient colors if enabled, otherwise use default colors
+    const getStyleColor = () => {
+      if (settings.gradient.enabled) {
+        switch (styleType) {
+          case "highlight":
+            return "gradient"; // Will be handled in HeadlineDisplay
+          case "underline":
+            return "gradient"; // Will be handled in HeadlineDisplay
+          case "block":
+            return "gradient"; // Will be handled in HeadlineDisplay
+          default:
+            return "transparent";
+        }
+      } else {
+        switch (styleType) {
+          case "highlight":
+            return "transparent"; // Handled by highlight flag
+          case "underline":
+            return "transparent"; // Handled by underline flag
+          case "block":
+            return "#8b5cf6"; // Purple block
+          default:
+            return "transparent";
+        }
+      }
+    };
 
     if (existingStyleIndex >= 0) {
       // Update existing style
@@ -29,7 +62,8 @@ export const WordStylingControls = () => {
         ...updatedStyling[existingStyleIndex],
         highlight: styleType === "highlight",
         underline: styleType === "underline",
-        backgroundColor: styleType === "block" ? "#8b5cf6" : "transparent",
+        backgroundColor:
+          styleType === "block" ? getStyleColor() : "transparent",
       };
       updateSettings({ wordStyling: updatedStyling });
     } else {
@@ -38,7 +72,8 @@ export const WordStylingControls = () => {
         text: word,
         highlight: styleType === "highlight",
         underline: styleType === "underline",
-        backgroundColor: styleType === "block" ? "#8b5cf6" : "transparent",
+        backgroundColor:
+          styleType === "block" ? getStyleColor() : "transparent",
       };
       updateSettings({
         wordStyling: [...settings.wordStyling, newStyle],
@@ -99,30 +134,89 @@ export const WordStylingControls = () => {
         <div className="space-y-3 pt-3 border-t border-white/10">
           <div className="text-xs text-white/60">Style "{selectedWord}"</div>
           <div className="grid grid-cols-3 gap-2">
-            <button
+            <motion.button
               onClick={() => applyWordStyling(selectedWord, "highlight")}
-              className="glass-panel p-2 border border-yellow-400/30 hover:bg-yellow-500/10 transition-colors">
-              <div className="text-center">
-                <div className="text-xs font-medium text-yellow-400">🔥</div>
+              className="glass-panel p-2 border border-yellow-400/30 hover:bg-yellow-500/10 transition-all duration-300 relative overflow-hidden"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}>
+              <AnimatePresence>
+                {appliedStyle === "highlight" && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    className="absolute inset-0 bg-yellow-400/20 rounded-lg"
+                  />
+                )}
+              </AnimatePresence>
+              <div className="text-center relative z-10">
+                <motion.div
+                  className="text-xs font-medium text-yellow-400"
+                  animate={
+                    appliedStyle === "highlight" ? { scale: [1, 1.2, 1] } : {}
+                  }
+                  transition={{ duration: 0.3 }}>
+                  🔥
+                </motion.div>
                 <div className="text-xs text-white/60">Highlight</div>
               </div>
-            </button>
-            <button
+            </motion.button>
+
+            <motion.button
               onClick={() => applyWordStyling(selectedWord, "underline")}
-              className="glass-panel p-2 border border-cyan-400/30 hover:bg-cyan-500/10 transition-colors">
-              <div className="text-center">
-                <div className="text-xs font-medium text-cyan-400">_</div>
+              className="glass-panel p-2 border border-cyan-400/30 hover:bg-cyan-500/10 transition-all duration-300 relative overflow-hidden"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}>
+              <AnimatePresence>
+                {appliedStyle === "underline" && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    className="absolute inset-0 bg-cyan-400/20 rounded-lg"
+                  />
+                )}
+              </AnimatePresence>
+              <div className="text-center relative z-10">
+                <motion.div
+                  className="text-xs font-medium text-cyan-400"
+                  animate={
+                    appliedStyle === "underline" ? { scale: [1, 1.2, 1] } : {}
+                  }
+                  transition={{ duration: 0.3 }}>
+                  _
+                </motion.div>
                 <div className="text-xs text-white/60">Underline</div>
               </div>
-            </button>
-            <button
+            </motion.button>
+
+            <motion.button
               onClick={() => applyWordStyling(selectedWord, "block")}
-              className="glass-panel p-2 border border-purple-400/30 hover:bg-purple-500/10 transition-colors">
-              <div className="text-center">
-                <div className="text-xs font-medium text-purple-400">⬛</div>
+              className="glass-panel p-2 border border-purple-400/30 hover:bg-purple-500/10 transition-all duration-300 relative overflow-hidden"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}>
+              <AnimatePresence>
+                {appliedStyle === "block" && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    className="absolute inset-0 bg-purple-400/20 rounded-lg"
+                  />
+                )}
+              </AnimatePresence>
+              <div className="text-center relative z-10">
+                <motion.div
+                  className="text-xs font-medium text-purple-400"
+                  animate={
+                    appliedStyle === "block" ? { scale: [1, 1.2, 1] } : {}
+                  }
+                  transition={{ duration: 0.3 }}>
+                  ⬛
+                </motion.div>
                 <div className="text-xs text-white/60">Block</div>
               </div>
-            </button>
+            </motion.button>
           </div>
 
           {getWordStyle(selectedWord) && (

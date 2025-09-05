@@ -11,13 +11,36 @@ import {
 } from "@/components/ui/select";
 
 const fontFamilies = [
-  { value: "Inter, system-ui, sans-serif", label: "Inter" },
-  { value: "system-ui, sans-serif", label: "System UI" },
-  { value: "Georgia, serif", label: "Georgia" },
-  { value: '"Times New Roman", serif', label: "Times New Roman" },
-  { value: '"Courier New", monospace', label: "Courier New" },
-  { value: '"Helvetica Neue", sans-serif', label: "Helvetica" },
-  { value: "Arial, sans-serif", label: "Arial" },
+  {
+    value: "'Bebas Neue', Impact, Arial, sans-serif",
+    label: "Bebas Neue",
+    category: "Ultra Condensed",
+  },
+  {
+    value: "'Orbitron', 'Courier New', monospace",
+    label: "Orbitron",
+    category: "Futuristic",
+  },
+  {
+    value: "Impact, 'Arial Black', Arial, sans-serif",
+    label: "Impact",
+    category: "Bold & Wide",
+  },
+  {
+    value: "Georgia, 'Times New Roman', serif",
+    label: "Georgia",
+    category: "Classic Serif",
+  },
+  {
+    value: "'Courier New', Courier, monospace",
+    label: "Courier New",
+    category: "Monospace",
+  },
+  {
+    value: "'Trebuchet MS', Arial, sans-serif",
+    label: "Trebuchet MS",
+    category: "Modern Sans",
+  },
 ];
 
 const fontWeights = [
@@ -79,18 +102,36 @@ export const TypographyControls = () => {
           value={typography.fontFamily}
           onValueChange={(value) => updateTypography({ fontFamily: value })}>
           <SelectTrigger className="w-full">
-            <SelectValue />
+            <SelectValue>
+              <span style={{ fontFamily: typography.fontFamily }}>
+                {fontFamilies.find((f) => f.value === typography.fontFamily)
+                  ?.label || "Select Font"}
+              </span>
+            </SelectValue>
           </SelectTrigger>
-          <SelectContent>
-            {fontFamilies.map((font) => (
-              <SelectItem key={font.value} value={font.value}>
-                <span
-                  style={{ fontFamily: font.value }}
-                  className="flex items-center gap-2">
-                  {font.label}
-                </span>
-              </SelectItem>
-            ))}
+          <SelectContent className="max-h-80">
+            {fontFamilies.map((font) => {
+              const isActive = typography.fontFamily === font.value;
+              return (
+                <SelectItem key={font.value} value={font.value}>
+                  <div className="flex flex-col items-start gap-1">
+                    <span
+                      style={{ fontFamily: font.value }}
+                      className={`font-medium text-sm transition-colors ${
+                        isActive ? "text-blue-400" : "text-white"
+                      }`}>
+                      {font.label}
+                    </span>
+                    <span
+                      className={`text-xs transition-colors ${
+                        isActive ? "text-blue-300/70" : "text-muted-foreground"
+                      }`}>
+                      {font.category}
+                    </span>
+                  </div>
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>
@@ -104,12 +145,28 @@ export const TypographyControls = () => {
             updateTypography({ fontWeight: parseInt(value) })
           }>
           <SelectTrigger className="w-full">
-            <SelectValue />
+            <SelectValue>
+              <span
+                style={{
+                  fontWeight: typography.fontWeight,
+                  fontFamily: typography.fontFamily,
+                }}>
+                {fontWeights.find((w) => w.value === typography.fontWeight)
+                  ?.label || "Select Weight"}
+              </span>
+            </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-80">
             {fontWeights.map((weight) => (
               <SelectItem key={weight.value} value={weight.value.toString()}>
-                <span style={{ fontWeight: weight.value }}>{weight.label}</span>
+                <span
+                  style={{
+                    fontWeight: weight.value,
+                    fontFamily: typography.fontFamily,
+                  }}
+                  className="text-sm">
+                  {weight.label}
+                </span>
               </SelectItem>
             ))}
           </SelectContent>

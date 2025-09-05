@@ -3,7 +3,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, ArrowLeft, ArrowDown, ArrowUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 import React from "react";
 
 const directions = [

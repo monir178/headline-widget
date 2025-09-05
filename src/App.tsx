@@ -16,17 +16,7 @@ function App() {
 
       {/* Siri Orb Background */}
       <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-1">
-        <SiriOrb
-          size="400px"
-          className="opacity-20"
-          colors={{
-            bg: "oklch(5% 0.02 264.695)",
-            c1: "oklch(75% 0.25 350)",
-            c2: "oklch(80% 0.22 200)",
-            c3: "oklch(78% 0.24 280)",
-          }}
-          animationDuration={25}
-        />
+        <SiriOrb size="300px" className="opacity-20" />
       </div>
 
       {/* Noise texture overlay */}

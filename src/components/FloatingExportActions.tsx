@@ -90,19 +90,61 @@ export const FloatingExportActions = () => {
   return (
     <div className="fixed top-6 right-6 z-50">
       <div className="relative">
-        {/* Main Toggle Button */}
+        {/* Main Toggle Button - Glowing */}
         <motion.button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="glass-panel p-3 lg:p-4 border border-white/20 hover:border-white/30 transition-all duration-300 group"
+          className="glass-panel p-3 lg:p-4 border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 group relative overflow-hidden"
           whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}>
+          whileTap={{ scale: 0.95 }}
+          style={{
+            boxShadow: `
+              0 0 20px rgba(59, 130, 246, 0.3),
+              0 0 40px rgba(147, 51, 234, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1)
+            `,
+          }}>
+          {/* Animated glow background */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-600/10 rounded-2xl"
+            animate={{
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
           <motion.div
             animate={{ rotate: isExpanded ? 45 : 0 }}
-            transition={{ duration: 0.2 }}>
+            transition={{ duration: 0.2 }}
+            className="relative z-10">
             {isExpanded ? (
-              <X className="w-4 h-4 lg:w-5 lg:h-5 text-white/80" />
+              <X className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-lg" />
             ) : (
-              <Share2 className="w-4 h-4 lg:w-5 lg:h-5 text-white/80 group-hover:text-white" />
+              <motion.div
+                className="relative"
+                animate={{
+                  filter: [
+                    "drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 16px rgba(147, 51, 234, 0.6))",
+                    "drop-shadow(0 0 12px rgba(59, 130, 246, 1)) drop-shadow(0 0 24px rgba(147, 51, 234, 0.8))",
+                    "drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 16px rgba(147, 51, 234, 0.6))",
+                  ],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}>
+                <Share2
+                  className="w-4 h-4 lg:w-5 lg:h-5 text-cyan-300 transition-colors duration-300"
+                  style={{
+                    filter:
+                      "drop-shadow(0 0 6px rgba(34, 211, 238, 0.8)) drop-shadow(0 0 12px rgba(34, 211, 238, 0.4))",
+                  }}
+                />
+              </motion.div>
             )}
           </motion.div>
         </motion.button>

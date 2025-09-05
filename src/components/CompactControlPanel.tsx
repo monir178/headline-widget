@@ -12,7 +12,7 @@ import { TypographyControls } from "./TypographyControls";
 import { GradientControls } from "./GradientControls";
 import { AnimationControls } from "./AnimationControls";
 import { WordStylingControls } from "./WordStylingControls";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 interface ControlSection {
   id: string;
