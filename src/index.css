@@ -449,13 +449,19 @@ select option {
   .mobile-safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
 
-  /* Mobile headline sizing */
-  .mobile-headline {
-    font-size: clamp(24px, 8vw, 48px) !important;
-    line-height: 1.2;
-    padding: 0 16px;
-  }
+/* Responsive headline sizing for all devices - respects dynamic font size */
+.mobile-headline {
+  /* Use CSS custom properties to make font size responsive while respecting user settings */
+  font-size: clamp(16px, 4vw, var(--dynamic-font-size, 48px));
+  line-height: 1.2;
+  padding: 0 16px;
+  /* Prevent word breaking */
+  word-break: keep-all;
+  white-space: normal;
+  hyphens: none;
+  overflow-wrap: break-word;
 }
 
 /* Touch-friendly interactions */
@@ -663,6 +669,42 @@ textarea:focus {
     inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.25),
     0 4px 16px rgba(0, 0, 0, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent word breaking in headlines */
+h1,
+.headline-text,
+.mobile-headline {
+  word-break: keep-all;
+  white-space: normal;
+  hyphens: none;
+  overflow-wrap: break-word;
+}
+
+/* Scrollable headline container */
+.glass-panel.overflow-y-auto {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.glass-panel.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.glass-panel.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.glass-panel.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.glass-panel.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .glass-panel:hover {

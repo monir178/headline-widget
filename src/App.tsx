@@ -43,7 +43,7 @@ function App() {
         <div className="lg:hidden h-full flex flex-col">
           {/* Mobile Header with Headline */}
           <div className="flex-1 flex items-center justify-center p-4 pt-16">
-            <div className="w-full max-w-lg">
+            <div className="w-full max-w-4xl">
               <HeadlineDisplay />
             </div>
           </div>

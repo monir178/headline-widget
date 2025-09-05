@@ -3,6 +3,11 @@ import { useHeadlineStore } from "@/store/headline-store";
 
 const MAX_CHARACTERS = 100;
 
+// Type for CSS custom properties
+interface CSSPropertiesWithVars extends React.CSSProperties {
+  "--dynamic-font-size"?: string;
+}
+
 export const HeadlineDisplay = () => {
   const { settings } = useHeadlineStore();
   const { text, typography, gradient, animation, effects, wordStyling } =
@@ -174,7 +179,7 @@ export const HeadlineDisplay = () => {
     const letters = text.split("");
 
     return (
-      <div className="glass-panel p-4 lg:p-8 text-center">
+      <div className="glass-panel p-4 lg:p-8 text-center max-h-[60vh] sm:max-h-[65vh] lg:max-h-[70vh] overflow-y-auto scrollbar-hide">
         {/* Character limit indicator */}
         {text.length > MAX_CHARACTERS * 0.8 && (
           <div className="mb-4 flex justify-center">
@@ -193,12 +198,20 @@ export const HeadlineDisplay = () => {
         <div
           key={gradientKey}
           className="flex flex-wrap justify-center group"
-          style={{
-            transition: animation.hoverGlow
-              ? "filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-              : "none",
-            filter: getCombinedFilter(false),
-          }}
+          style={
+            {
+              transition: animation.hoverGlow
+                ? "filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                : "none",
+              filter: getCombinedFilter(false),
+              // Set CSS custom property for responsive font sizing
+              "--dynamic-font-size": `${typography.fontSize}px`,
+              // Prevent word breaking
+              wordBreak: "keep-all",
+              whiteSpace: "normal",
+              lineHeight: "1.2",
+            } as CSSPropertiesWithVars
+          }
           onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
             if (animation.hoverGlow) {
               e.currentTarget.style.filter = getCombinedFilter(true);
@@ -374,7 +387,7 @@ export const HeadlineDisplay = () => {
 
   // Render with word styling
   return (
-    <div className="glass-panel p-4 lg:p-8 text-center">
+    <div className="glass-panel p-4 lg:p-8 text-center max-h-[60vh] sm:max-h-[65vh] lg:max-h-[70vh] overflow-y-auto scrollbar-hide">
       {/* Character limit indicator */}
       {text.length > MAX_CHARACTERS * 0.8 && (
         <div className="mb-4 flex justify-center">
@@ -399,22 +412,32 @@ export const HeadlineDisplay = () => {
           duration: 0.4,
           ease: "easeInOut" as const,
         }}
-        style={{
-          ...motionProps.style,
-          // Apply gradient to the entire text container to maintain flow
-          background:
-            gradient.enabled && !animation.outline
-              ? `linear-gradient(${directionMap[gradient.direction]}, ${
-                  gradient.startColor
-                }, ${gradient.endColor})`
-              : "none",
-          WebkitBackgroundClip:
-            gradient.enabled && !animation.outline ? "text" : "initial",
-          WebkitTextFillColor:
-            gradient.enabled && !animation.outline ? "transparent" : "initial",
-          backgroundClip:
-            gradient.enabled && !animation.outline ? "text" : "initial",
-        }}
+        style={
+          {
+            ...motionProps.style,
+            // Apply gradient to the entire text container to maintain flow
+            background:
+              gradient.enabled && !animation.outline
+                ? `linear-gradient(${directionMap[gradient.direction]}, ${
+                    gradient.startColor
+                  }, ${gradient.endColor})`
+                : "none",
+            WebkitBackgroundClip:
+              gradient.enabled && !animation.outline ? "text" : "initial",
+            WebkitTextFillColor:
+              gradient.enabled && !animation.outline
+                ? "transparent"
+                : "initial",
+            backgroundClip:
+              gradient.enabled && !animation.outline ? "text" : "initial",
+            // Set CSS custom property for responsive font sizing
+            "--dynamic-font-size": `${typography.fontSize}px`,
+            // Prevent word breaking
+            wordBreak: "keep-all",
+            whiteSpace: "normal",
+            lineHeight: "1.2",
+          } as CSSPropertiesWithVars
+        }
         onMouseEnter={motionProps.onMouseEnter}
         onMouseLeave={motionProps.onMouseLeave}
         className="cursor-default select-none leading-tight mobile-headline">
