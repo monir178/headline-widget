@@ -170,9 +170,9 @@ export const HeadlineDisplay = () => {
 
   // Font change animation props
   const fontChangeProps = {
-    initial: { opacity: 0, scale: 0.95 },
-    animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 1.05 },
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
     transition: {
       duration: 0.4,
       ease: "easeInOut" as const,
@@ -340,14 +340,14 @@ export const HeadlineDisplay = () => {
                     ? { opacity: 0, y: 20, scale: 0.8 }
                     : animation.fadeIn
                     ? { opacity: 0, y: 20 }
-                    : { opacity: 0, scale: 0.95 }
+                    : { opacity: 0 }
                 }
                 animate={
                   animation.perLetter
                     ? { opacity: 1, y: 0, scale: 1 }
                     : animation.fadeIn
                     ? { opacity: 1, y: 0 }
-                    : { opacity: 1, scale: 1 }
+                    : { opacity: 1 }
                 }
                 transition={{
                   duration: animation.perLetter ? 0.6 : 0.5,
@@ -371,8 +371,8 @@ export const HeadlineDisplay = () => {
     <div className="glass-panel p-4 lg:p-8 text-center">
       <motion.h1
         key={`${fontKey}-${gradientKey}`}
-        initial={{ ...motionProps.initial, ...fontChangeProps.initial }}
-        animate={{ ...motionProps.animate, ...fontChangeProps.animate }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{
           ...motionProps.transition,
           duration: 0.4,
