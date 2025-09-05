@@ -12,6 +12,7 @@ import { TypographyControls } from "./TypographyControls";
 import { GradientControls } from "./GradientControls";
 import { AnimationControls } from "./AnimationControls";
 import { WordStylingControls } from "./WordStylingControls";
+import { cn } from "@/lib/utils/cn";
 
 interface ControlSection {
   id: string;
@@ -124,7 +125,10 @@ export const CompactControlPanel = () => {
                   {/* Section Header */}
                   <button
                     onClick={() => toggleSection(section.id)}
-                    className="w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors duration-200">
+                    className={cn(
+                      "w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors duration-200",
+                      !isExpanded ? "rounded-2xl" : "rounded-t-2xl"
+                    )}>
                     <div className="flex items-center gap-3">
                       <div
                         className={`p-2 rounded-lg bg-white/10 ${colorClasses.text}`}>
