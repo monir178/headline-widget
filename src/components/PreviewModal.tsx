@@ -377,17 +377,17 @@ export const PreviewModal = ({ isOpen, onClose }: PreviewModalProps) => {
       return (
         <div className="flex items-center justify-center p-1 sm:p-2 md:p-4 lg:p-6 h-full">
           <div className="relative">
-            {/* Custom iPhone-style mockup - Larger for mobile devices */}
-            <div className="relative w-[240px] h-[480px] sm:w-[280px] sm:h-[560px] md:w-[320px] md:h-[640px] lg:w-[360px] lg:h-[720px] xl:w-[400px] xl:h-[800px] bg-gray-800 rounded-[48px] sm:rounded-[56px] md:rounded-[64px] lg:rounded-[72px] xl:rounded-[80px] p-2 sm:p-2.5 md:p-3 lg:p-3.5 xl:p-4 shadow-2xl">
+            {/* Custom iPhone-style mockup - Optimized size for all devices */}
+            <div className="relative w-[200px] h-[400px] sm:w-[220px] sm:h-[440px] md:w-[240px] md:h-[480px] lg:w-[280px] lg:h-[560px] xl:w-[320px] xl:h-[640px] bg-gray-800 rounded-[40px] sm:rounded-[44px] md:rounded-[48px] lg:rounded-[56px] xl:rounded-[64px] p-2 sm:p-2.5 md:p-3 lg:p-3.5 xl:p-4 shadow-2xl">
               {/* iPhone frame */}
-              <div className="w-full h-full bg-black rounded-[44px] sm:rounded-[52px] md:rounded-[60px] lg:rounded-[68px] xl:rounded-[76px] overflow-hidden relative">
+              <div className="w-full h-full bg-black rounded-[36px] sm:rounded-[40px] md:rounded-[44px] lg:rounded-[52px] xl:rounded-[60px] overflow-hidden relative">
                 {/* Dynamic Island - Better responsive */}
-                <div className="absolute top-3 sm:top-4 md:top-5 lg:top-6 xl:top-7 left-1/2 transform -translate-x-1/2 w-20 sm:w-24 md:w-28 lg:w-32 xl:w-36 h-4 sm:h-5 md:h-6 lg:h-7 xl:h-8 bg-black rounded-full z-10"></div>
+                <div className="absolute top-2.5 sm:top-3 md:top-3.5 lg:top-4 xl:top-5 left-1/2 transform -translate-x-1/2 w-16 sm:w-18 md:w-20 lg:w-24 xl:w-28 h-3 sm:h-3.5 md:h-4 lg:h-5 xl:h-6 bg-black rounded-full z-10"></div>
 
                 {/* Screen content - Scrollable */}
                 <div className="w-full h-full bg-gradient-to-br from-slate-900 to-slate-800 overflow-y-auto scrollbar-hide">
-                  <div className="p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 min-h-full flex items-center justify-center">
-                    <div className="w-full max-w-[180px] sm:max-w-[220px] md:max-w-[260px] lg:max-w-[300px] xl:max-w-[340px]">
+                  <div className="p-2.5 sm:p-3 md:p-3.5 lg:p-4 xl:p-5 min-h-full flex items-center justify-center">
+                    <div className="w-full max-w-[150px] sm:max-w-[170px] md:max-w-[190px] lg:max-w-[220px] xl:max-w-[250px]">
                       <PreviewText />
                     </div>
                   </div>
@@ -396,7 +396,7 @@ export const PreviewModal = ({ isOpen, onClose }: PreviewModalProps) => {
             </div>
 
             {/* Home indicator - Better responsive */}
-            <div className="absolute bottom-2 sm:bottom-2.5 md:bottom-3 lg:bottom-3.5 xl:bottom-4 left-1/2 transform -translate-x-1/2 w-20 sm:w-24 md:w-28 lg:w-32 xl:w-36 h-1 sm:h-1 md:h-1.5 lg:h-1.5 xl:h-2 bg-white/30 rounded-full"></div>
+            <div className="absolute bottom-1.5 sm:bottom-2 md:bottom-2.5 lg:bottom-3 xl:bottom-3.5 left-1/2 transform -translate-x-1/2 w-16 sm:w-18 md:w-20 lg:w-24 xl:w-28 h-0.5 sm:h-1 md:h-1 lg:h-1 xl:h-1.5 bg-white/30 rounded-full"></div>
           </div>
         </div>
       );
@@ -428,8 +428,15 @@ export const PreviewModal = ({ isOpen, onClose }: PreviewModalProps) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 md:p-4">
-            <div className="glass-panel w-full max-w-[95vw] sm:max-w-2xl md:max-w-4xl lg:max-w-6xl max-h-[98vh] sm:max-h-[90vh] overflow-hidden border border-white/20 rounded-xl sm:rounded-2xl md:rounded-3xl">
+            style={{ backdropFilter: "blur(20px)" }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6">
+            <div
+              style={{
+                background: "rgba(255, 255, 255, 0.06)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                willChange: "transform, opacity",
+              }}
+              className="w-full max-w-[95vw] sm:max-w-2xl md:max-w-4xl lg:max-w-6xl max-h-[80vh] overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl">
               {/* Header */}
               <div className="flex items-center justify-between p-3 sm:p-4 lg:p-6 border-b border-white/10">
                 <div className="flex items-center gap-2 sm:gap-3">
@@ -454,7 +461,7 @@ export const PreviewModal = ({ isOpen, onClose }: PreviewModalProps) => {
               </div>
 
               {/* Content */}
-              <div className="flex flex-col sm:flex-row h-[calc(98vh-80px)] sm:h-[calc(90vh-120px)] overflow-hidden">
+              <div className="flex flex-col sm:flex-row h-[calc(80vh-80px)] overflow-hidden">
                 {/* Preview Mode Selector */}
                 <div className="w-full sm:w-48 lg:w-64 p-2 sm:p-3 lg:p-4 border-b sm:border-b-0 sm:border-r border-white/10 overflow-y-auto flex-shrink-0">
                   <div className="space-y-1 sm:space-y-2">

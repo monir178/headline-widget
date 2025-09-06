@@ -162,8 +162,15 @@ export const ImportModal = ({ isOpen, onClose }: ImportModalProps) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            style={{ backdropFilter: "blur(20px)" }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="glass-panel w-full max-w-2xl max-h-[90vh] overflow-hidden border border-white/20 rounded-3xl">
+            <div
+              style={{
+                background: "rgba(255, 255, 255, 0.06)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                willChange: "transform, opacity",
+              }}
+              className="w-full max-w-2xl max-h-[80vh] overflow-hidden rounded-3xl">
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10">
                 <div className="flex items-center gap-3">
@@ -187,7 +194,7 @@ export const ImportModal = ({ isOpen, onClose }: ImportModalProps) => {
               </div>
 
               {/* Content */}
-              <div className="p-6">
+              <div className="p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
                 {/* Tab Navigation */}
                 <div className="flex gap-2 mb-6">
                   <button
