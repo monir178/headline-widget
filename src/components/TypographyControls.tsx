@@ -16,31 +16,49 @@ const fontFamilies = [
     value: "'Bebas Neue', Impact, Arial, sans-serif",
     label: "Bebas Neue",
     category: "Ultra Condensed",
+    availableWeights: [400], // Only 400 available
   },
   {
     value: "'Orbitron', 'Courier New', monospace",
     label: "Orbitron",
     category: "Futuristic",
+    availableWeights: [400, 700, 900], // 400, 700, 900 available
+  },
+  {
+    value: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    label: "Inter",
+    category: "Modern Sans",
+    availableWeights: [100, 200, 300, 400, 500, 600, 700, 800, 900], // All weights available
+  },
+  {
+    value: "'Roboto', -apple-system, BlinkMacSystemFont, sans-serif",
+    label: "Roboto",
+    category: "Clean Sans",
+    availableWeights: [100, 300, 400, 500, 700, 900], // 100, 300, 400, 500, 700, 900 available
   },
   {
     value: "Impact, 'Arial Black', Arial, sans-serif",
     label: "Impact",
     category: "Bold & Wide",
+    availableWeights: [400], // Only 400 available
   },
   {
     value: "Georgia, 'Times New Roman', serif",
     label: "Georgia",
     category: "Classic Serif",
+    availableWeights: [400, 700], // 400, 700 available
   },
   {
     value: "'Courier New', Courier, monospace",
     label: "Courier New",
     category: "Monospace",
+    availableWeights: [400, 700], // 400, 700 available
   },
   {
     value: "'Trebuchet MS', Arial, sans-serif",
     label: "Trebuchet MS",
     category: "Modern Sans",
+    availableWeights: [400, 700], // 400, 700 available
   },
 ];
 
@@ -61,6 +79,22 @@ const MAX_CHARACTERS = 50;
 export const TypographyControls = memo(() => {
   const { settings, updateSettings, updateTypography } = useHeadlineStore();
   const { text, typography } = settings;
+
+  // Handle font family change and adjust weight if needed
+  const handleFontFamilyChange = (fontFamily: string) => {
+    const selectedFont = fontFamilies.find((f) => f.value === fontFamily);
+    const availableWeights = selectedFont?.availableWeights || [400];
+
+    // If current weight is not available for the new font, set to the first available weight
+    if (!availableWeights.includes(typography.fontWeight)) {
+      updateTypography({
+        fontFamily,
+        fontWeight: availableWeights[0],
+      });
+    } else {
+      updateTypography({ fontFamily });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -141,7 +175,7 @@ export const TypographyControls = memo(() => {
         <Label className="text-sm font-medium text-white/80">Font Family</Label>
         <Select
           value={typography.fontFamily}
-          onValueChange={(value) => updateTypography({ fontFamily: value })}>
+          onValueChange={handleFontFamilyChange}>
           <SelectTrigger className="w-full">
             <SelectValue>
               <span style={{ fontFamily: typography.fontFamily }}>
@@ -198,18 +232,30 @@ export const TypographyControls = memo(() => {
             </SelectValue>
           </SelectTrigger>
           <SelectContent className="max-h-80">
-            {fontWeights.map((weight) => (
-              <SelectItem key={weight.value} value={weight.value.toString()}>
-                <span
-                  style={{
-                    fontWeight: weight.value,
-                    fontFamily: typography.fontFamily,
-                  }}
-                  className="text-sm">
-                  {weight.label}
-                </span>
-              </SelectItem>
-            ))}
+            {(() => {
+              // Get available weights for the current font
+              const currentFont = fontFamilies.find(
+                (f) => f.value === typography.fontFamily
+              );
+              const availableWeights = currentFont?.availableWeights || [400];
+
+              return fontWeights
+                .filter((weight) => availableWeights.includes(weight.value))
+                .map((weight) => (
+                  <SelectItem
+                    key={weight.value}
+                    value={weight.value.toString()}>
+                    <span
+                      style={{
+                        fontWeight: weight.value,
+                        fontFamily: typography.fontFamily,
+                      }}
+                      className="text-sm">
+                      {weight.label}
+                    </span>
+                  </SelectItem>
+                ));
+            })()}
           </SelectContent>
         </Select>
       </div>
