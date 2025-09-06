@@ -4,7 +4,6 @@ import { useMemo, useCallback, useEffect, useState, useRef } from "react";
 
 const MAX_CHARACTERS = 100;
 
-// Type for CSS custom properties
 interface CSSPropertiesWithVars extends React.CSSProperties {
   "--dynamic-font-size"?: string;
 }
@@ -14,30 +13,16 @@ export const HeadlineDisplay = () => {
   const { text, typography, gradient, animation, effects, wordStyling } =
     settings;
 
-  // Track previous text to determine which letters are new
   const prevTextRef = useRef(text);
   const prevPerLetterRef = useRef(animation.perLetter);
-  const [newLetterIndices, setNewLetterIndices] = useState<Set<number>>(
-    new Set()
-  );
   const [isInitialAnimation, setIsInitialAnimation] = useState(false);
-
-  // Track new letters when text changes
   useEffect(() => {
     if (animation.perLetter) {
-      // If per-letter animation was just enabled, animate all letters
       if (!prevPerLetterRef.current) {
-        const allIndices = new Set<number>();
-        for (let i = 0; i < text.length; i++) {
-          allIndices.add(i);
-        }
-        setNewLetterIndices(allIndices);
         setIsInitialAnimation(true);
 
-        // Clear after animation - give more time for longer text
         const animationDuration = Math.max(1000, text.length * 50 + 1000);
         const timer = setTimeout(() => {
-          setNewLetterIndices(new Set());
           setIsInitialAnimation(false);
         }, animationDuration);
 
@@ -45,32 +30,10 @@ export const HeadlineDisplay = () => {
         prevTextRef.current = text;
         return () => clearTimeout(timer);
       }
-
-      // If text changed, animate only new letters
       if (text !== prevTextRef.current) {
-        const prevText = prevTextRef.current;
-        const newIndices = new Set<number>();
-
-        // Find new letters (text got longer)
-        if (text.length > prevText.length) {
-          for (let i = prevText.length; i < text.length; i++) {
-            newIndices.add(i);
-          }
-        }
-
-        setNewLetterIndices(newIndices);
         prevTextRef.current = text;
-
-        // Clear new letter indices after animation - give more time for longer text
-        const animationDuration = Math.max(1000, newIndices.size * 50 + 1000);
-        const timer = setTimeout(() => {
-          setNewLetterIndices(new Set());
-        }, animationDuration);
-
-        return () => clearTimeout(timer);
       }
     } else {
-      setNewLetterIndices(new Set());
       prevTextRef.current = text;
       prevPerLetterRef.current = false;
     }
@@ -286,8 +249,20 @@ export const HeadlineDisplay = () => {
         return {
           ...baseLetterStyle,
           color: animation.outline ? "transparent" : "#ffffff",
-          WebkitTextStroke: animation.outline
-            ? `${effects.outlineWidth}px ${effects.outlineColor}`
+          WebkitTextStroke: "none",
+          textShadow: animation.outline
+            ? `
+                      -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${effects.outlineColor},
+                      0px -${effects.outlineWidth}px 0 ${effects.outlineColor},
+                      ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${effects.outlineColor},
+                      -${effects.outlineWidth}px 0px 0 ${effects.outlineColor},
+                      ${effects.outlineWidth}px 0px 0 ${effects.outlineColor},
+                      ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${effects.outlineColor},
+                      0px ${effects.outlineWidth}px 0 ${effects.outlineColor},
+                      -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${effects.outlineColor}
+                    `
+                .replace(/\s+/g, " ")
+                .trim()
             : "none",
         };
       }
@@ -303,15 +278,15 @@ export const HeadlineDisplay = () => {
               WebkitTextFillColor: "transparent",
               backgroundClip: "initial",
               textShadow: `
-                -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                0px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
-                -${effects.outlineWidth}px 0px 0 ${gradient.startColor},
-                ${effects.outlineWidth}px 0px 0 ${gradient.endColor},
-                ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor},
-                0px ${effects.outlineWidth}px 0 ${gradient.endColor},
-                -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor}
-              `
+                      -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                      0px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                      ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                      -${effects.outlineWidth}px 0px 0 ${gradient.startColor},
+                      ${effects.outlineWidth}px 0px 0 ${gradient.endColor},
+                      ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor},
+                      0px ${effects.outlineWidth}px 0 ${gradient.endColor},
+                      -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor}
+                    `
                 .replace(/\s+/g, " ")
                 .trim(),
               WebkitTextStroke: "none",
@@ -355,15 +330,15 @@ export const HeadlineDisplay = () => {
         color: animation.outline ? "transparent" : `rgb(${r}, ${g}, ${b})`,
         textShadow: animation.outline
           ? `
-            -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
-            0px -${effects.outlineWidth}px 0 ${gradient.startColor},
-            ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
-            -${effects.outlineWidth}px 0px 0 ${gradient.startColor},
-            ${effects.outlineWidth}px 0px 0 ${gradient.endColor},
-            ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor},
-            0px ${effects.outlineWidth}px 0 ${gradient.endColor},
-            -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor}
-          `
+                    -${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                    0px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                    ${effects.outlineWidth}px -${effects.outlineWidth}px 0 ${gradient.startColor},
+                    -${effects.outlineWidth}px 0px 0 ${gradient.startColor},
+                    ${effects.outlineWidth}px 0px 0 ${gradient.endColor},
+                    ${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor},
+                    0px ${effects.outlineWidth}px 0 ${gradient.endColor},
+                    -${effects.outlineWidth}px ${effects.outlineWidth}px 0 ${gradient.endColor}
+                  `
               .replace(/\s+/g, " ")
               .trim()
           : "none",
@@ -373,8 +348,6 @@ export const HeadlineDisplay = () => {
   }, [text, typography, gradient, animation, effects, directionMap]);
 
   if (animation.perLetter) {
-    const letters = text.split("");
-
     return (
       <div className="glass-panel p-4 lg:p-8 text-center max-h-[60vh] sm:max-h-[65vh] lg:max-h-[70vh] overflow-y-auto scrollbar-hide">
         {/* Character limit indicator */}
@@ -419,39 +392,190 @@ export const HeadlineDisplay = () => {
               e.currentTarget.style.filter = getCombinedFilter(false);
             }
           }}>
-          {letters.map((letter, index) => {
-            // Use a simple stable key
-            const letterKey = `${index}-${letter}`;
+          {processedText
+            .map((segment, segmentIndex) => {
+              if (!segment.styling) {
+                // For unstyled segments, render letters normally
+                return segment.text.split("").map((letter, letterIndex) => {
+                  // Calculate global index more reliably
+                  let globalIndex = 0;
+                  for (let i = 0; i < segmentIndex; i++) {
+                    globalIndex += processedText[i].text.length;
+                  }
+                  globalIndex += letterIndex;
+                  const letterKey = `${segmentIndex}-${letterIndex}-${letter}`;
+                  const shouldAnimate = animation.perLetter;
+                  const newLetterDelay = isInitialAnimation
+                    ? globalIndex * 0.05
+                    : 0;
 
-            // Determine if this letter should animate
-            const isNewLetter = newLetterIndices.has(index);
-            const shouldAnimate = animation.perLetter && isNewLetter;
+                  return (
+                    <span
+                      key={letterKey}
+                      style={{
+                        ...(letterStyles[globalIndex] || {}),
+                        animation: shouldAnimate
+                          ? `letterAppear 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) ${newLetterDelay}s both`
+                          : animation.fadeIn && !animation.perLetter
+                          ? `fadeInUp 0.5s ease-out ${globalIndex * 0.05}s both`
+                          : "none",
+                      }}
+                      className="cursor-default">
+                      {letter === " " ? "\u00A0" : letter}
+                    </span>
+                  );
+                });
+              }
 
-            // Calculate delay for new letters
-            // When typing (new letters), no delay for instant appearance
-            // When animation is first enabled, use cascading delay
-            const newLetterDelay = isNewLetter
-              ? isInitialAnimation
-                ? index * 0.05 // Cascading delay when animation is first enabled
-                : 0 // No delay when typing - instant appearance
-              : 0;
+              // For styled segments, apply word styling to the entire word, not individual letters
+              const wordStyle: React.CSSProperties = {
+                position: "relative",
+                display: "inline-block",
+              };
 
-            return (
-              <span
-                key={letterKey}
-                style={{
-                  ...letterStyles[index],
-                  animation: shouldAnimate
-                    ? `letterAppear 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) ${newLetterDelay}s both`
-                    : animation.fadeIn && !animation.perLetter
-                    ? `fadeInUp 0.5s ease-out ${index * 0.05}s both`
-                    : "none",
-                }}
-                className="cursor-default">
-                {letter === " " ? "\u00A0" : letter}
-              </span>
-            );
-          })}
+              const overlayStyles: React.CSSProperties = {};
+
+              if (segment.styling.highlight) {
+                overlayStyles.background = gradient.enabled
+                  ? `linear-gradient(90deg, ${gradient.startColor}40, ${gradient.endColor}40)`
+                  : "rgba(251, 191, 36, 0.4)";
+                overlayStyles.padding = "2px 6px";
+                overlayStyles.borderRadius = "6px";
+                overlayStyles.boxShadow = gradient.enabled
+                  ? `0 0 8px ${gradient.startColor}30, 0 0 16px ${gradient.endColor}20`
+                  : "0 0 8px rgba(251, 191, 36, 0.3)";
+                overlayStyles.WebkitBackgroundClip = "border-box";
+                overlayStyles.backgroundClip = "border-box";
+                // Don't override color if text outline is enabled
+                if (!animation.outline) {
+                  overlayStyles.color = "#ffffff";
+                  overlayStyles.WebkitTextFillColor = "#ffffff";
+                }
+              }
+
+              if (segment.styling.underline) {
+                const underlineColor = gradient.enabled
+                  ? gradient.endColor
+                  : "#06b6d4";
+                overlayStyles.textDecoration = "underline";
+                overlayStyles.textDecorationColor = underlineColor;
+                overlayStyles.textDecorationThickness = "3px";
+                overlayStyles.textUnderlineOffset = "4px";
+                overlayStyles.textDecorationStyle = "solid";
+                overlayStyles.filter = `drop-shadow(0 2px 4px ${underlineColor}40)`;
+
+                if (gradient.enabled) {
+                  overlayStyles.background = `linear-gradient(${
+                    directionMap[gradient.direction]
+                  }, ${gradient.startColor}, ${gradient.endColor})`;
+                  overlayStyles.WebkitBackgroundClip = "text";
+                  overlayStyles.WebkitTextFillColor = "transparent";
+                  overlayStyles.backgroundClip = "text";
+                } else {
+                  // Don't override color if text outline is enabled
+                  if (!animation.outline) {
+                    overlayStyles.color = "#ffffff";
+                    overlayStyles.WebkitTextFillColor = "#ffffff";
+                  }
+                }
+              }
+
+              if (
+                segment.styling.backgroundColor &&
+                segment.styling.backgroundColor !== "transparent"
+              ) {
+                const blockColor = gradient.enabled
+                  ? `linear-gradient(135deg, ${gradient.startColor}, ${gradient.endColor})`
+                  : segment.styling.backgroundColor;
+                overlayStyles.background = blockColor;
+                overlayStyles.WebkitBackgroundClip = "border-box";
+                overlayStyles.backgroundClip = "border-box";
+                overlayStyles.padding = "4px 8px";
+                overlayStyles.borderRadius = "8px";
+                overlayStyles.margin = "0 2px";
+                overlayStyles.boxShadow = gradient.enabled
+                  ? `0 0 12px ${gradient.startColor}40, 0 0 24px ${gradient.endColor}30`
+                  : `0 0 12px ${segment.styling.backgroundColor}40`;
+                overlayStyles.fontWeight = "600";
+                // Don't override color if text outline is enabled
+                if (!animation.outline) {
+                  overlayStyles.color = "#ffffff";
+                  overlayStyles.WebkitTextFillColor = "#ffffff";
+                }
+              }
+
+              // Render the styled word with per-letter animation inside
+              return (
+                <span
+                  key={`styled-${segmentIndex}`}
+                  style={wordStyle}
+                  className="cursor-default">
+                  <span
+                    style={{
+                      ...overlayStyles,
+                      // Remove underline from outer span since we apply it to each letter
+                      ...(segment.styling?.underline
+                        ? {
+                            textDecoration: "none",
+                            filter: "none",
+                            background: "none",
+                            WebkitBackgroundClip: "initial",
+                            backgroundClip: "initial",
+                          }
+                        : {}),
+                    }}
+                    className="inline-block">
+                    {segment.text.split("").map((letter, letterIndex) => {
+                      // Calculate global index more reliably
+                      let globalIndex = 0;
+                      for (let i = 0; i < segmentIndex; i++) {
+                        globalIndex += processedText[i].text.length;
+                      }
+                      globalIndex += letterIndex;
+                      const letterKey = `${segmentIndex}-${letterIndex}-${letter}`;
+                      const shouldAnimate = animation.perLetter;
+                      const newLetterDelay = isInitialAnimation
+                        ? globalIndex * 0.05
+                        : 0;
+
+                      // For styled words, apply styling while preserving text outline
+                      const letterStyle = {
+                        // Always include base letter styles for font size, weight, etc.
+                        ...(letterStyles[globalIndex] || {}),
+                        // For styled words, apply styling while preserving text outline
+                        ...(segment.styling
+                          ? {
+                              // Preserve text outline from base styles
+                              textShadow:
+                                letterStyles[globalIndex]?.textShadow || "none",
+                              WebkitTextStroke:
+                                letterStyles[globalIndex]?.WebkitTextStroke ||
+                                "none",
+                              // Apply word styling
+                              ...overlayStyles,
+                            }
+                          : {}),
+                        animation: shouldAnimate
+                          ? `letterAppear 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) ${newLetterDelay}s both`
+                          : animation.fadeIn && !animation.perLetter
+                          ? `fadeInUp 0.5s ease-out ${globalIndex * 0.05}s both`
+                          : "none",
+                      };
+
+                      return (
+                        <span
+                          key={letterKey}
+                          style={letterStyle}
+                          className="cursor-default">
+                          {letter === " " ? "\u00A0" : letter}
+                        </span>
+                      );
+                    })}
+                  </span>
+                </span>
+              );
+            })
+            .flat()}
         </div>
       </div>
     );
@@ -538,11 +662,13 @@ export const HeadlineDisplay = () => {
               ? `0 0 8px ${gradient.startColor}30, 0 0 16px ${gradient.endColor}20`
               : "0 0 8px rgba(251, 191, 36, 0.3)";
 
-            // Force text to be visible when highlighted
-            overlayStyles.color = "#ffffff";
-            overlayStyles.WebkitTextFillColor = "#ffffff";
             overlayStyles.WebkitBackgroundClip = "border-box";
             overlayStyles.backgroundClip = "border-box";
+            // Don't override color if text outline is enabled
+            if (!animation.outline) {
+              overlayStyles.color = "#ffffff";
+              overlayStyles.WebkitTextFillColor = "#ffffff";
+            }
           }
 
           if (segment.styling.underline) {
@@ -568,8 +694,11 @@ export const HeadlineDisplay = () => {
               overlayStyles.WebkitTextFillColor = "transparent";
               overlayStyles.backgroundClip = "text";
             } else {
-              overlayStyles.color = "#ffffff";
-              overlayStyles.WebkitTextFillColor = "#ffffff";
+              // Don't override color if text outline is enabled
+              if (!animation.outline) {
+                overlayStyles.color = "#ffffff";
+                overlayStyles.WebkitTextFillColor = "#ffffff";
+              }
             }
           }
 
@@ -583,8 +712,6 @@ export const HeadlineDisplay = () => {
               : segment.styling.backgroundColor;
 
             overlayStyles.background = blockColor;
-            overlayStyles.color = "#ffffff";
-            overlayStyles.WebkitTextFillColor = "#ffffff";
             overlayStyles.WebkitBackgroundClip = "border-box";
             overlayStyles.backgroundClip = "border-box";
             overlayStyles.padding = "4px 8px";
@@ -594,6 +721,11 @@ export const HeadlineDisplay = () => {
               ? `0 0 12px ${gradient.startColor}40, 0 0 24px ${gradient.endColor}30`
               : `0 0 12px ${segment.styling.backgroundColor}40`;
             overlayStyles.fontWeight = "600";
+            // Don't override color if text outline is enabled
+            if (!animation.outline) {
+              overlayStyles.color = "#ffffff";
+              overlayStyles.WebkitTextFillColor = "#ffffff";
+            }
           }
 
           return (

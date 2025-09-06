@@ -10,7 +10,6 @@ export const parseJSONImport = (jsonString: string): ImportResult => {
     try {
         const parsed = JSON.parse(jsonString);
 
-        // Check if it's a valid HeadlineSettings object
         if (!parsed.settings) {
             return {
                 success: false,
@@ -19,8 +18,6 @@ export const parseJSONImport = (jsonString: string): ImportResult => {
         }
 
         const settings = parsed.settings;
-
-        // Validate required properties
         const requiredProps = ['text', 'typography', 'gradient', 'wordStyling', 'animation', 'effects'];
         for (const prop of requiredProps) {
             if (!settings[prop]) {

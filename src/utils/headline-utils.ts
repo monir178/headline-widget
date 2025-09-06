@@ -27,7 +27,6 @@ export const processTextWithStyling = (text: string, wordStyling: HeadlineSettin
 };
 
 export const generateEmbedCode = (settings: HeadlineSettings): string => {
-  // Generate word styling CSS
   const wordStylingCSS = settings.wordStyling.map((style, index) => {
     let css = `
     .word-styling-${index} {`;

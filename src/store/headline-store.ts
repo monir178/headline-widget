@@ -15,7 +15,7 @@ const initialSettings: HeadlineSettings = {
     text: "Your Amazing Headline",
     typography: {
         fontSize: 56,
-        fontFamily: "Inter, system-ui, sans-serif",
+        fontFamily: "'Orbitron', 'Courier New', monospace",
         fontWeight: 700,
     },
     gradient: {
@@ -24,7 +24,20 @@ const initialSettings: HeadlineSettings = {
         startColor: '#cb3cff',
         endColor: '#00d5ff',
     },
-    wordStyling: [],
+    wordStyling: [
+        {
+            text: "Your",
+            highlight: false,
+            underline: true,
+            backgroundColor: "transparent",
+        },
+        {
+            text: "Amazing",
+            highlight: true,
+            underline: false,
+            backgroundColor: "transparent",
+        },
+    ],
     animation: {
         fadeIn: true,
         hoverGlow: false,
