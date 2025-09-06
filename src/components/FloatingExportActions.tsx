@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, Copy, Share2, Check, X } from "lucide-react";
+import { Download, Copy, Share2, Check, X, Upload } from "lucide-react";
 import { useHeadlineStore } from "@/store/headline-store";
 import {
   exportSettings,
   downloadJSON,
   generateEmbedCode,
 } from "@/utils/headline-utils";
+import { ImportModal } from "./ImportModal";
 import toast from "react-hot-toast";
 
 export const FloatingExportActions = () => {
   const { settings } = useHeadlineStore();
   const [isExpanded, setIsExpanded] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const handleExportJSON = () => {
     try {
@@ -89,108 +91,169 @@ export const FloatingExportActions = () => {
 
   return (
     <div className="fixed top-6 right-6 z-50">
-      <div className="relative">
-        {/* Main Toggle Button - Glowing */}
-        <motion.button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="glass-panel p-3 lg:p-4 border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 group relative overflow-hidden"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          style={{
-            boxShadow: `
+      <div className="flex gap-3">
+        {/* Import Button */}
+        <div className="relative">
+          <motion.button
+            onClick={() => setIsImportModalOpen(true)}
+            className="glass-panel p-3 lg:p-4 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 group relative overflow-hidden"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              boxShadow: `
+                0 0 20px rgba(147, 51, 234, 0.3),
+                0 0 40px rgba(236, 72, 153, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `,
+            }}>
+            {/* Animated glow background */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-600/10 rounded-2xl"
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+
+            <motion.div
+              className="relative z-10"
+              animate={{
+                filter: [
+                  "drop-shadow(0 0 8px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 16px rgba(236, 72, 153, 0.6))",
+                  "drop-shadow(0 0 12px rgba(147, 51, 234, 1)) drop-shadow(0 0 24px rgba(236, 72, 153, 0.8))",
+                  "drop-shadow(0 0 8px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 16px rgba(236, 72, 153, 0.6))",
+                ],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}>
+              <Upload
+                className="w-4 h-4 lg:w-5 lg:h-5 text-purple-300 transition-colors duration-300"
+                style={{
+                  filter:
+                    "drop-shadow(0 0 6px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 12px rgba(236, 72, 153, 0.4))",
+                }}
+              />
+            </motion.div>
+          </motion.button>
+        </div>
+
+        {/* Export Button */}
+        <div className="relative">
+          {/* Main Toggle Button - Glowing */}
+          <motion.button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="glass-panel p-3 lg:p-4 border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 group relative overflow-hidden"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              boxShadow: `
               0 0 20px rgba(59, 130, 246, 0.3),
               0 0 40px rgba(147, 51, 234, 0.2),
               inset 0 1px 0 rgba(255, 255, 255, 0.1)
             `,
-          }}>
-          {/* Animated glow background */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-600/10 rounded-2xl"
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
+            }}>
+            {/* Animated glow background */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-600/10 rounded-2xl"
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
 
-          <motion.div
-            animate={{ rotate: isExpanded ? 45 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="relative z-10">
-            {isExpanded ? (
-              <X className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-lg" />
-            ) : (
-              <motion.div
-                className="relative"
-                animate={{
-                  filter: [
-                    "drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 16px rgba(147, 51, 234, 0.6))",
-                    "drop-shadow(0 0 12px rgba(59, 130, 246, 1)) drop-shadow(0 0 24px rgba(147, 51, 234, 0.8))",
-                    "drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 16px rgba(147, 51, 234, 0.6))",
-                  ],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}>
-                <Share2
-                  className="w-4 h-4 lg:w-5 lg:h-5 text-cyan-300 transition-colors duration-300"
-                  style={{
-                    filter:
-                      "drop-shadow(0 0 6px rgba(34, 211, 238, 0.8)) drop-shadow(0 0 12px rgba(34, 211, 238, 0.4))",
+            <motion.div
+              animate={{ rotate: isExpanded ? 45 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="relative z-10">
+              {isExpanded ? (
+                <X className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-lg" />
+              ) : (
+                <motion.div
+                  className="relative"
+                  animate={{
+                    filter: [
+                      "drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 16px rgba(147, 51, 234, 0.6))",
+                      "drop-shadow(0 0 12px rgba(59, 130, 246, 1)) drop-shadow(0 0 24px rgba(147, 51, 234, 0.8))",
+                      "drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 16px rgba(147, 51, 234, 0.6))",
+                    ],
                   }}
-                />
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}>
+                  <Share2
+                    className="w-4 h-4 lg:w-5 lg:h-5 text-cyan-300 transition-colors duration-300"
+                    style={{
+                      filter:
+                        "drop-shadow(0 0 6px rgba(34, 211, 238, 0.8)) drop-shadow(0 0 12px rgba(34, 211, 238, 0.4))",
+                    }}
+                  />
+                </motion.div>
+              )}
+            </motion.div>
+          </motion.button>
+
+          {/* Action Buttons */}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full mt-3 right-0 space-y-2 min-w-[140px] lg:min-w-[160px]">
+                {actions.map((action, index) => {
+                  const Icon = action.icon;
+                  const colorClasses = {
+                    emerald:
+                      "border-emerald-400/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400",
+                    blue: "border-blue-400/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400",
+                    green:
+                      "border-green-400/30 bg-green-500/10 hover:bg-green-500/20 text-green-400",
+                  };
+
+                  return (
+                    <motion.button
+                      key={action.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      onClick={action.onClick}
+                      className={`glass-panel w-full p-2 lg:p-3 border transition-all duration-300 flex items-center gap-2 lg:gap-3 ${
+                        colorClasses[action.color as keyof typeof colorClasses]
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}>
+                      <Icon className="w-3 h-3 lg:w-4 lg:h-4" />
+                      <span className="text-xs lg:text-sm font-medium">
+                        {action.label}
+                      </span>
+                    </motion.button>
+                  );
+                })}
               </motion.div>
             )}
-          </motion.div>
-        </motion.button>
-
-        {/* Action Buttons */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: -10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-full mt-3 right-0 space-y-2 min-w-[140px] lg:min-w-[160px]">
-              {actions.map((action, index) => {
-                const Icon = action.icon;
-                const colorClasses = {
-                  emerald:
-                    "border-emerald-400/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400",
-                  blue: "border-blue-400/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400",
-                  green:
-                    "border-green-400/30 bg-green-500/10 hover:bg-green-500/20 text-green-400",
-                };
-
-                return (
-                  <motion.button
-                    key={action.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    onClick={action.onClick}
-                    className={`glass-panel w-full p-2 lg:p-3 border transition-all duration-300 flex items-center gap-2 lg:gap-3 ${
-                      colorClasses[action.color as keyof typeof colorClasses]
-                    }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}>
-                    <Icon className="w-3 h-3 lg:w-4 lg:h-4" />
-                    <span className="text-xs lg:text-sm font-medium">
-                      {action.label}
-                    </span>
-                  </motion.button>
-                );
-              })}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
       </div>
+
+      {/* Import Modal */}
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+      />
     </div>
   );
 };
