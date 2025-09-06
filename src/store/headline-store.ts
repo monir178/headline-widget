@@ -24,20 +24,7 @@ const initialSettings: HeadlineSettings = {
         startColor: '#cb3cff',
         endColor: '#00d5ff',
     },
-    wordStyling: [
-        {
-            text: "Your",
-            highlight: false,
-            underline: true,
-            backgroundColor: "transparent",
-        },
-        {
-            text: "Amazing",
-            highlight: true,
-            underline: false,
-            backgroundColor: "transparent",
-        },
-    ],
+    wordStyling: [],
     animation: {
         fadeIn: true,
         hoverGlow: false,
