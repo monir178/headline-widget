@@ -29,7 +29,7 @@ export const DesktopMockup = ({ className = "" }: DeviceMockupProps) => (
   <div
     className={`flex items-center justify-center p-1 sm:p-2 md:p-4 lg:p-6 h-full ${className}`}>
     <div className="relative">
-      <div className="relative w-[400px] h-[250px] sm:w-[450px] sm:h-[280px] md:w-[500px] md:h-[310px] lg:w-[600px] lg:h-[375px] xl:w-[700px] xl:h-[440px] bg-gray-800 rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 shadow-2xl">
+      <div className="relative w-[380px] h-[240px] sm:w-[420px] sm:h-[260px] md:w-[460px] md:h-[290px] lg:w-[550px] lg:h-[350px] xl:w-[650px] xl:h-[410px] bg-gray-800 rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 shadow-2xl">
         <div className="w-full h-full bg-black rounded-md sm:rounded-lg md:rounded-xl overflow-hidden relative">
           <div className="absolute top-2 sm:top-3 md:top-4 left-1/2 transform -translate-x-1/2 w-8 sm:w-10 md:w-12 lg:w-14 xl:w-16 h-1 sm:h-1.5 md:h-2 lg:h-2.5 xl:h-3 bg-gray-600 rounded-full"></div>
           <div className="w-full h-full bg-gradient-to-br from-slate-900 to-slate-800 overflow-y-auto scrollbar-hide">
@@ -50,7 +50,7 @@ export const TabletMockup = ({ className = "" }: DeviceMockupProps) => (
   <div
     className={`flex items-center justify-center p-1 sm:p-2 md:p-4 lg:p-6 h-full ${className}`}>
     <div className="relative">
-      <div className="relative w-[300px] h-[400px] sm:w-[340px] sm:h-[450px] md:w-[380px] md:h-[500px] lg:w-[420px] lg:h-[560px] xl:w-[460px] xl:h-[620px] bg-gray-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-2 sm:p-2.5 md:p-3 lg:p-3.5 xl:p-4 shadow-2xl">
+      <div className="relative w-[280px] h-[380px] sm:w-[320px] sm:h-[430px] md:w-[360px] md:h-[480px] lg:w-[400px] lg:h-[540px] xl:w-[440px] xl:h-[600px] bg-gray-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-2 sm:p-2.5 md:p-3 lg:p-3.5 xl:p-4 shadow-2xl">
         <div className="w-full h-full bg-black rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden relative">
           <div className="absolute top-2 sm:top-3 md:top-4 left-1/2 transform -translate-x-1/2 w-6 sm:w-8 md:w-10 lg:w-12 xl:w-14 h-1 sm:h-1.5 md:h-2 lg:h-2.5 xl:h-3 bg-gray-600 rounded-full"></div>
           <div className="w-full h-full bg-gradient-to-br from-slate-900 to-slate-800 overflow-y-auto scrollbar-hide">
