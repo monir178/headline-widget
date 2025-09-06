@@ -403,7 +403,7 @@ export const PreviewModal = ({ isOpen, onClose }: PreviewModalProps) => {
     }
 
     return (
-      <div className="flex-1 bg-gray-100 rounded-2xl overflow-hidden">
+      <div className="flex-1 bg-none overflow-hidden rounded-3xl border-none">
         {getPreviewContent()}
       </div>
     );
