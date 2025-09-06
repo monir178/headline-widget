@@ -4,7 +4,9 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, ArrowLeft, ArrowDown, ArrowUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Sketch } from "@uiw/react-color";
 
 const directions = [
   {
@@ -26,6 +28,55 @@ const directions = [
 export const GradientControls = () => {
   const { settings, updateGradient } = useHeadlineStore();
   const { gradient } = settings;
+  const [isStartColorPickerOpen, setIsStartColorPickerOpen] = useState(false);
+  const [isEndColorPickerOpen, setIsEndColorPickerOpen] = useState(false);
+  const [startModalPosition, setStartModalPosition] = useState({ x: 0, y: 0 });
+  const [endModalPosition, setEndModalPosition] = useState({ x: 0, y: 0 });
+  const startColorButtonRef = React.useRef<HTMLButtonElement>(null);
+  const endColorButtonRef = React.useRef<HTMLButtonElement>(null);
+
+  // Handle escape key to close modals
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsStartColorPickerOpen(false);
+        setIsEndColorPickerOpen(false);
+      }
+    };
+
+    if (isStartColorPickerOpen || isEndColorPickerOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [isStartColorPickerOpen, isEndColorPickerOpen]);
+
+  // Simple and reliable popover positioning - always above the button
+  const calculateModalPosition = (
+    buttonRef: React.RefObject<HTMLButtonElement | null>,
+    isStartColor: boolean
+  ) => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const popoverWidth = 280;
+      const popoverHeight = 350;
+      const margin = 10;
+
+      // Always position above the button, centered horizontally
+      let x = rect.left + rect.width / 2 - popoverWidth / 2;
+      let y = rect.top - popoverHeight - margin;
+
+      // Ensure popover stays within viewport bounds
+      x = Math.max(margin, Math.min(x, viewportWidth - popoverWidth - margin));
+      y = Math.max(margin, y);
+
+      if (isStartColor) {
+        setStartModalPosition({ x, y });
+      } else {
+        setEndModalPosition({ x, y });
+      }
+    }
+  };
 
   const getDirectionGradient = () => {
     const direction =
@@ -139,52 +190,54 @@ export const GradientControls = () => {
                   <span className="text-xs text-white/60 font-medium">
                     Start
                   </span>
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
+                  <motion.button
+                    ref={startColorButtonRef}
+                    onClick={() => {
+                      // Small delay to ensure button is rendered
+                      setTimeout(() => {
+                        calculateModalPosition(startColorButtonRef, true);
+                        setIsStartColorPickerOpen(true);
+                      }, 10);
+                    }}
+                    className="relative w-12 h-12 rounded-full border-2 border-white/30 transition-all duration-300 hover:border-white/50 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+                    style={{ backgroundColor: gradient.startColor }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="relative">
-                    <input
-                      type="color"
-                      value={gradient.startColor}
-                      onChange={(e) =>
-                        updateGradient({ startColor: e.target.value })
-                      }
-                      className="w-12 h-12 rounded-full cursor-pointer border-2 border-white/30 transition-all duration-300 hover:border-white/50"
-                      style={{ backgroundColor: gradient.startColor }}
-                    />
+                    aria-label="Start color">
                     <div
                       className="absolute inset-0 rounded-full transition-all duration-300 pointer-events-none -z-10"
                       style={{
                         boxShadow: `0 0 20px ${gradient.startColor}40`,
                       }}
                     />
-                  </motion.div>
+                  </motion.button>
                 </div>
 
                 {/* End Color */}
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-gradient-to-r from-transparent to-white opacity-60" />
                   <span className="text-xs text-white/60 font-medium">End</span>
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
+                  <motion.button
+                    ref={endColorButtonRef}
+                    onClick={() => {
+                      // Small delay to ensure button is rendered
+                      setTimeout(() => {
+                        calculateModalPosition(endColorButtonRef, false);
+                        setIsEndColorPickerOpen(true);
+                      }, 10);
+                    }}
+                    className="relative w-12 h-12 rounded-full border-2 border-white/30 transition-all duration-300 hover:border-white/50 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+                    style={{ backgroundColor: gradient.endColor }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="relative">
-                    <input
-                      type="color"
-                      value={gradient.endColor}
-                      onChange={(e) =>
-                        updateGradient({ endColor: e.target.value })
-                      }
-                      className="w-12 h-12 rounded-full cursor-pointer border-2 border-white/30 transition-all duration-300 hover:border-white/50"
-                      style={{ backgroundColor: gradient.endColor }}
-                    />
+                    aria-label="End color">
                     <div
                       className="absolute inset-0 rounded-full transition-all duration-300 pointer-events-none -z-10"
                       style={{
                         boxShadow: `0 0 20px ${gradient.endColor}40`,
                       }}
                     />
-                  </motion.div>
+                  </motion.button>
                 </div>
               </div>
             </div>
@@ -235,6 +288,94 @@ export const GradientControls = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Start Color Picker Popover */}
+      {isStartColorPickerOpen &&
+        createPortal(
+          <AnimatePresence>
+            <div
+              className="fixed inset-0 z-50"
+              onClick={() => setIsStartColorPickerOpen(false)}>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="border border-white/20 rounded-xl shadow-2xl p-4 w-[280px] fixed pointer-events-auto"
+                style={{
+                  left: `${startModalPosition.x}px`,
+                  top: `${startModalPosition.y}px`,
+                  background: "rgba(255, 255, 255, 0.06)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                }}
+                onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">
+                    Start Color
+                  </h3>
+                  <button
+                    onClick={() => setIsStartColorPickerOpen(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all duration-200">
+                    ✕
+                  </button>
+                </div>
+                <Sketch
+                  color={gradient.startColor}
+                  onChange={(color) => {
+                    updateGradient({ startColor: color.hex });
+                  }}
+                  style={{ width: "100%" }}
+                />
+              </motion.div>
+            </div>
+          </AnimatePresence>,
+          document.body
+        )}
+
+      {/* End Color Picker Popover */}
+      {isEndColorPickerOpen &&
+        createPortal(
+          <AnimatePresence>
+            <div
+              className="fixed inset-0 z-50"
+              onClick={() => setIsEndColorPickerOpen(false)}>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="border border-white/20 rounded-xl shadow-2xl p-4 w-[280px] fixed pointer-events-auto"
+                style={{
+                  left: `${endModalPosition.x}px`,
+                  top: `${endModalPosition.y}px`,
+                  background: "rgba(255, 255, 255, 0.06)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                }}
+                onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">
+                    End Color
+                  </h3>
+                  <button
+                    onClick={() => setIsEndColorPickerOpen(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all duration-200">
+                    ✕
+                  </button>
+                </div>
+                <Sketch
+                  color={gradient.endColor}
+                  onChange={(color) => {
+                    updateGradient({ endColor: color.hex });
+                  }}
+                  style={{ width: "100%" }}
+                />
+              </motion.div>
+            </div>
+          </AnimatePresence>,
+          document.body
+        )}
     </div>
   );
 };
