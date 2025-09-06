@@ -20,6 +20,7 @@ export const HeadlineDisplay = () => {
   const [newLetterIndices, setNewLetterIndices] = useState<Set<number>>(
     new Set()
   );
+  const [isInitialAnimation, setIsInitialAnimation] = useState(false);
 
   // Track new letters when text changes
   useEffect(() => {
@@ -31,11 +32,14 @@ export const HeadlineDisplay = () => {
           allIndices.add(i);
         }
         setNewLetterIndices(allIndices);
+        setIsInitialAnimation(true);
 
-        // Clear after animation
+        // Clear after animation - give more time for longer text
+        const animationDuration = Math.max(1000, text.length * 50 + 1000);
         const timer = setTimeout(() => {
           setNewLetterIndices(new Set());
-        }, 1000);
+          setIsInitialAnimation(false);
+        }, animationDuration);
 
         prevPerLetterRef.current = true;
         prevTextRef.current = text;
@@ -57,10 +61,11 @@ export const HeadlineDisplay = () => {
         setNewLetterIndices(newIndices);
         prevTextRef.current = text;
 
-        // Clear new letter indices after animation
+        // Clear new letter indices after animation - give more time for longer text
+        const animationDuration = Math.max(1000, newIndices.size * 50 + 1000);
         const timer = setTimeout(() => {
           setNewLetterIndices(new Set());
-        }, 1000);
+        }, animationDuration);
 
         return () => clearTimeout(timer);
       }
@@ -422,9 +427,13 @@ export const HeadlineDisplay = () => {
             const isNewLetter = newLetterIndices.has(index);
             const shouldAnimate = animation.perLetter && isNewLetter;
 
-            // Calculate delay for new letters (only for the most recent batch)
+            // Calculate delay for new letters
+            // When typing (new letters), no delay for instant appearance
+            // When animation is first enabled, use cascading delay
             const newLetterDelay = isNewLetter
-              ? (index - Math.min(...Array.from(newLetterIndices))) * 0.05
+              ? isInitialAnimation
+                ? index * 0.05 // Cascading delay when animation is first enabled
+                : 0 // No delay when typing - instant appearance
               : 0;
 
             return (

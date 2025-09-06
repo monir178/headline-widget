@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, Copy, Share2, Check, X, Upload } from "lucide-react";
+import { Download, Copy, Share2, Check, X, Upload, Eye } from "lucide-react";
 import { useHeadlineStore } from "@/store/headline-store";
 import {
   exportSettings,
@@ -8,6 +8,7 @@ import {
   generateEmbedCode,
 } from "@/utils/headline-utils";
 import { ImportModal } from "./ImportModal";
+import { PreviewModal } from "./PreviewModal";
 import toast from "react-hot-toast";
 
 export const FloatingExportActions = () => {
@@ -15,6 +16,7 @@ export const FloatingExportActions = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
   const handleExportJSON = () => {
     try {
@@ -92,6 +94,58 @@ export const FloatingExportActions = () => {
   return (
     <div className="fixed top-6 right-6 z-50">
       <div className="flex gap-3">
+        {/* Preview Button */}
+        <div className="relative">
+          <motion.button
+            onClick={() => setIsPreviewModalOpen(true)}
+            className="glass-panel p-3 lg:p-4 border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300 group relative overflow-hidden"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              boxShadow: `
+                0 0 20px rgba(251, 146, 60, 0.3),
+                0 0 40px rgba(249, 115, 22, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `,
+            }}>
+            {/* Animated glow background */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-amber-600/10 rounded-2xl"
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+
+            <motion.div
+              className="relative z-10"
+              animate={{
+                filter: [
+                  "drop-shadow(0 0 8px rgba(251, 146, 60, 0.8)) drop-shadow(0 0 16px rgba(249, 115, 22, 0.6))",
+                  "drop-shadow(0 0 12px rgba(251, 146, 60, 1)) drop-shadow(0 0 24px rgba(249, 115, 22, 0.8))",
+                  "drop-shadow(0 0 8px rgba(251, 146, 60, 0.8)) drop-shadow(0 0 16px rgba(249, 115, 22, 0.6))",
+                ],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}>
+              <Eye
+                className="w-4 h-4 lg:w-5 lg:h-5 text-orange-300 transition-colors duration-300"
+                style={{
+                  filter:
+                    "drop-shadow(0 0 6px rgba(251, 146, 60, 0.8)) drop-shadow(0 0 12px rgba(249, 115, 22, 0.4))",
+                }}
+              />
+            </motion.div>
+          </motion.button>
+        </div>
+
         {/* Import Button */}
         <div className="relative">
           <motion.button
@@ -253,6 +307,12 @@ export const FloatingExportActions = () => {
       <ImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
+      />
+
+      {/* Preview Modal */}
+      <PreviewModal
+        isOpen={isPreviewModalOpen}
+        onClose={() => setIsPreviewModalOpen(false)}
       />
     </div>
   );

@@ -1,7 +1,6 @@
 import { HeadlineDisplay } from "./components/HeadlineDisplay";
 import { CompactControlPanel } from "./components/CompactControlPanel";
 import { FloatingExportActions } from "./components/FloatingExportActions";
-import SiriOrb from "./components/smoothui/ui/SiriOrb";
 import { Toaster } from "react-hot-toast";
 import { memo } from "react";
 
@@ -15,11 +14,6 @@ const App = memo(() => {
         <div className=" absolute -bottom-1/3  w-[200vw]  h-2/5 bg-gradient-to-br from-violet-500/15 to-blue-700/40 rounded-full blur-[90px]  "></div>
       </div>
 
-      {/* Siri Orb Background */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-1">
-        <SiriOrb size="300px" className="opacity-20" />
-      </div>
-
       {/* Noise texture overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-950/30 via-transparent to-slate-950/30 z-2"></div>
 
@@ -28,7 +22,7 @@ const App = memo(() => {
         {/* Desktop Layout */}
         <div className="hidden lg:flex h-full">
           {/* Left Sidebar - Controls */}
-          <div className="min-w-md flex-shrink-0 p-4">
+          <div className="w-md flex-shrink-0 p-4">
             <CompactControlPanel />
           </div>
 
