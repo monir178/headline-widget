@@ -95,7 +95,11 @@ export const FloatingExportActions = () => {
     <div className="fixed top-6 right-6 z-50">
       <div className="flex gap-3">
         {/* Preview Button */}
-        <div className="relative">
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 1.2 }}>
           <motion.button
             onClick={() => setIsPreviewModalOpen(true)}
             className="glass-panel p-3 lg:p-4 border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300 group relative overflow-hidden"
@@ -144,10 +148,14 @@ export const FloatingExportActions = () => {
               />
             </motion.div>
           </motion.button>
-        </div>
+        </motion.div>
 
         {/* Import Button */}
-        <div className="relative">
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 1.3 }}>
           <motion.button
             onClick={() => setIsImportModalOpen(true)}
             className="glass-panel p-3 lg:p-4 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 group relative overflow-hidden"
@@ -196,10 +204,14 @@ export const FloatingExportActions = () => {
               />
             </motion.div>
           </motion.button>
-        </div>
+        </motion.div>
 
         {/* Export Button */}
-        <div className="relative">
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 1.4 }}>
           {/* Main Toggle Button - Glowing */}
           <motion.button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -300,7 +312,7 @@ export const FloatingExportActions = () => {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </div>
 
       {/* Import Modal */}
